@@ -534,6 +534,7 @@
       .sale-feedback { font-size:13px; color:var(--muted); }
       .sale-feedback.success { color:#087b57; font-weight:850; }
       .sale-feedback.error { color:#b42318; font-weight:850; }
+      .sales-form-frame { width:100%; min-height:82vh; border:1px solid var(--line); border-top:0; background:#fff; border-radius:0 0 8px 8px; }
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column} }
     </style>
@@ -673,8 +674,8 @@
       </section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
-      <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
-      <form class="native-sale-form" id="nativeSaleForm">
+      <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">Carga oficial conectada al formulario y la planilla de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
+      <form class="native-sale-form hidden" id="nativeSaleForm">
         <div class="native-sale-grid">
           <label>Sede<select id="saleSede" required><option value="">Elegí la sede</option><option>Córdoba</option><option>Cristo Obrero</option><option>Remedios de Escalada</option></select></label>
           <label id="saleAdvisorWrap">Asesor/a<select id="saleAdvisor" required></select></label>
@@ -690,6 +691,7 @@
         </div>
         <div class="sale-submit-row"><button class="sale-button" id="submitSale">Guardar venta</button><span class="sale-feedback" id="saleFeedback"></span></div>
       </form>
+      <iframe class="sales-form-frame" id="salesFormFrame" title="Formulario oficial de inscripción Bruner"></iframe>
     </main>
     <dialog id="goalDialog">
       <form class="modal" id="goalForm">
@@ -777,6 +779,7 @@
           : last.getDate();
       };
       let salesReturnView = "app";
+      const SALES_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdKMnIRbUM02qiaHA9AJ-asZ0pj1J5-tWmtKbCKbmwG1ygxWw/viewform";
       function openSalesForm(advisor, returnView) {
         salesReturnView = returnView;
         $("nativeSaleForm").reset();
@@ -786,6 +789,10 @@
         $("saleAdvisor").value = advisor || "";
         $("saleAdvisor").disabled = Boolean(advisor);
         $("saleAdvisorWrap").classList.toggle("hidden", Boolean(advisor));
+        const formAdvisor = advisor === "Clau" ? "Claudia" : advisor || "";
+        const formParams = new URLSearchParams({ embedded: "true" });
+        if (formAdvisor) formParams.set("entry.1413307859", formAdvisor);
+        $("salesFormFrame").src = SALES_FORM_URL + "?" + formParams.toString();
         $("salesFormTitle").textContent = advisor ? "Cargar mi venta · " + advisor : "Cargar venta";
         $("app").classList.add("hidden");
         $("adminApp").classList.add("hidden");
@@ -1038,6 +1045,7 @@
       $("backFromSale").onclick = () => {
         $("salesFormPage").classList.add("hidden");
         $(salesReturnView).classList.remove("hidden");
+        $("salesFormFrame").src = "about:blank";
         $("title").textContent = salesReturnView === "app" && state.data ? "¡Vamos, " + state.data.advisor + "! ✨" : "Panel de Nahuel — Supervisor";
       };
       $("editGoal").onclick = () => $("goalDialog").showModal();
