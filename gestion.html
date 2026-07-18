@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#402166">
-  <title>Panel de gestión · Instituto Bruner</title>
+  <title>Panel de gestión Ventas · Instituto Bruner</title>
   <style>
     :root{--violet:#552d88;--violet2:#7b4bad;--pink:#e85f91;--mint:#159872;--gold:#f2b43b;--ink:#292238;--muted:#746d80;--bg:#f7f3f9;--card:#fff;--line:#e9e0ee;--shadow:0 16px 42px #492a6118}
     *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 95% 0,#f4d5e2 0,transparent 27%),var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,sans-serif}button,input,select{font:inherit}.hidden{display:none!important}.wrap{width:min(1120px,calc(100% - 28px));margin:auto}
@@ -19,7 +19,7 @@
   </style>
 </head>
 <body>
-  <header><div class="wrap head"><div class="brand"><img class="logo" src="assets/bruner-logo-principal.png" alt="Instituto Bruner"><div><div class="eyebrow">Instituto Bruner</div><h1>Panel de gestión</h1><p class="sub">Ventas, cobros y proyección mensual.</p></div></div><button id="logout" class="ghost hidden">Salir</button></div></header>
+  <header><div class="wrap head"><div class="brand"><img class="logo" src="assets/bruner-logo-principal.png" alt="Instituto Bruner"><div><div class="eyebrow">Instituto Bruner</div><h1>Panel de gestión Ventas</h1><p class="sub">Ventas, cobros y proyección mensual.</p></div></div><button id="logout" class="ghost hidden">Salir</button></div></header>
   <section id="login" class="login"><h2>Ingresá al panel</h2><div class="muted">Información consolidada de Instituto Bruner.</div><form id="loginForm"><label for="pin">Clave de acceso</label><input id="pin" type="password" autocomplete="current-password" required><button class="primary" type="submit">Ver indicadores</button><div id="loginError" class="error hidden"></div></form></section>
   <main id="dashboard" class="wrap hidden">
     <section class="toolbar"><label>Período<select id="month"></select></label><div class="actions"><span id="updated" class="status"></span><button id="refresh" class="primary">Actualizar</button></div></section>
