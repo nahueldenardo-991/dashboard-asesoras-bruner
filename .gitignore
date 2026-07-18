@@ -3,3 +3,4 @@ apps_script.gs
 
 # Local Netlify folder
 .netlify
+node_modules

@@ -659,7 +659,7 @@
       </section>
     </main>
     <main class="wrap hidden" id="adminApp">
-      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminStamp"></div></section>
+      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
       <section class="hero">
         <article class="personal"><div class="kicker">Objetivo mensual grupal</div><div class="hero-row"><div class="big"><span id="adminTeamSales">0</span> / <span id="adminTeamGoalView">—</span></div><button id="adminEditTeamGoal">Editar meta</button></div><div class="bar"><i id="adminTeamBar"></i></div><div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="adminTeamHorse">🐎</span><span class="race-finish">🏁</span></div><div class="under"><span id="adminTeamPercent">Meta del equipo</span><span id="adminTeamRemaining"></span></div></article>
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
@@ -724,6 +724,7 @@
       </form>
     </dialog>
     <dialog id="teamGoalDialog"><form class="modal" id="teamGoalForm"><h2>Objetivo grupal</h2><div class="muted">Define la meta total del equipo para el mes seleccionado.</div><label>Objetivo total<input id="adminGoal" type="number" min="0" max="9999" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
+    <dialog id="workingDaysDialog"><form class="modal" id="workingDaysForm"><h2>Días hábiles de venta</h2><div class="muted">Lunes a sábado, sin domingos ni feriados nacionales. Podés reemplazar el total para este mes.</div><label>Cantidad de días hábiles<input id="workingDaysInput" type="number" min="1" max="31" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
     <div class="notice" id="notice"></div>
     <footer>Datos actualizados desde las planillas de Instituto Bruner</footer>
     <script>
@@ -774,13 +775,22 @@
         }
         throw lastError || Error("No se pudo conectar con Drive.");
       }
-      const daysLeft = (k) => {
+      const OFFICIAL_HOLIDAYS = new Set([
+        "2026-01-01","2026-02-16","2026-02-17","2026-03-23","2026-03-24","2026-04-02","2026-04-03","2026-05-01","2026-05-25","2026-06-15","2026-06-20","2026-07-09","2026-07-10","2026-08-17","2026-10-12","2026-11-23","2026-12-07","2026-12-08","2026-12-25"
+      ]);
+      const isWorkingDay = (date) => date.getDay() !== 0 && !OFFICIAL_HOLIDAYS.has(`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`);
+      const workingDaysTotal = (k) => { const [y,m]=k.split("-").map(Number), last=new Date(y,m,0); let total=0; for(let day=1;day<=last.getDate();day++) if(isWorkingDay(new Date(y,m-1,day))) total++; return total; };
+      const daysLeft = (k, override = 0) => {
         const [y, m] = k.split("-").map(Number),
           n = new Date(),
           last = new Date(y, m, 0);
-        return n.getFullYear() === y && n.getMonth() + 1 === m
-          ? Math.max(1, last.getDate() - n.getDate() + 1)
-          : last.getDate();
+        let total = 0, elapsed = 0;
+        for (let day = 1; day <= last.getDate(); day++) {
+          const date = new Date(y, m - 1, day);
+          if (isWorkingDay(date)) { total++; if (date < new Date(n.getFullYear(),n.getMonth(),n.getDate())) elapsed++; }
+        }
+        const effective = Number(override) || total;
+        return n.getFullYear() === y && n.getMonth() + 1 === m ? Math.max(1, effective - elapsed) : Math.max(1, effective);
       };
       let salesReturnView = "app";
       function openSalesForm(advisor, returnView) {
@@ -888,7 +898,7 @@
           g = d.personal.goal || 0,
           r = Math.max(0, g - s),
           p = g ? Math.round((s / g) * 100) : 0,
-          left = daysLeft(d.month),
+          left = daysLeft(d.month, d.workingDaysOverride),
           daily = g && r ? Math.ceil(r / left) : 0;
         $("mySales").textContent = s;
         $("myGoal").textContent = g || "—";
@@ -1105,6 +1115,10 @@
         state.month = d.month;
         $("adminDashboardMonth").innerHTML = d.months.map((m) => `<option value="${m.key}" ${m.key === d.month ? "selected" : ""}>${esc(m.label)}</option>`).join("");
         $("adminStamp").textContent = "Actualizado " + d.updatedAt;
+        const automaticWorkingDays = workingDaysTotal(d.month);
+        const effectiveWorkingDays = d.workingDaysOverride || automaticWorkingDays;
+        $("workingDaysInput").value = effectiveWorkingDays;
+        $("adminWorkingDaysStatus").textContent = effectiveWorkingDays + " días hábiles" + (d.workingDaysOverride ? " · ajustado" : " · calendario oficial");
         const goal = d.teamGoal || 0, remaining = Math.max(0, goal - d.teamSales), percent = goal ? Math.round(d.teamSales / goal * 100) : 0;
         $("adminTeamSales").textContent = d.teamSales;
         $("adminTeamGoalView").textContent = goal || "—";
@@ -1130,6 +1144,15 @@
       $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
       $("adminDashboardMonth").onchange = (e) => { state.month = e.target.value; loadAdmin().catch((x) => alert(x.message)); };
       $("adminEditTeamGoal").onclick = () => $("teamGoalDialog").showModal();
+      $("adminEditWorkingDays").onclick = () => $("workingDaysDialog").showModal();
+      $("workingDaysForm").onsubmit = async (e) => {
+        e.preventDefault(); const b=e.submitter; b.disabled=true;
+        try {
+          const response = await fetch(READ_API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"setWorkingDays", token:state.adminToken, month:state.month, days:Number($("workingDaysInput").value) }) });
+          const d = await response.json(); if(!d.ok) throw Error(d.error);
+          $("workingDaysDialog").close(); showNotice("Días hábiles guardados ✓"); await loadAdmin();
+        } catch(x) { alert(x.message); } finally { b.disabled=false; }
+      };
       $("teamGoalForm").onsubmit = async (e) => {
         e.preventDefault();
         const b = e.submitter; b.disabled = true;
