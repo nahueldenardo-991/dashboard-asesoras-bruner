@@ -728,6 +728,7 @@
     <footer>Datos actualizados desde las planillas de Instituto Bruner</footer>
     <script>
       const API_URL = "https://script.google.com/macros/s/AKfycbyhKiGC0ZzG2KpOc-TRoOih2qXUTsG2ckWi98Blyc1j0Fma_R0ec5QcAoysElUBvCo/exec",
+        READ_API_URL = "https://bruner-asesoras-api.netlify.app/api/bruner",
         state = { token: "", adminToken: "", month: "", data: null, adminData: null, advisors: [] };
       const $ = (x) => document.getElementById(x),
         esc = (s) =>
@@ -742,32 +743,23 @@
                 "'": "&#39;",
               })[c],
           );
-      function jsonpOnce(params) {
-        return new Promise((resolve, reject) => {
-          if (API_URL.startsWith("TODO_"))
-            return reject(Error("TODO: falta publicar el nuevo backend."));
-          const cb =
-              "bruner_" + Date.now() + Math.random().toString(16).slice(2),
-            s = document.createElement("script"),
-            t = setTimeout(
-              () => done(Error("La actualización tardó demasiado.")),
-              15000,
-            );
-          function done(e, v) {
-            clearTimeout(t);
-            delete window[cb];
-            s.remove();
-            e ? reject(e) : resolve(v);
-          }
-          window[cb] = (v) => done(null, v);
-          s.onerror = () => done(Error("No se pudo conectar con Drive."));
-          s.referrerPolicy = "no-referrer";
-          s.src =
-            API_URL +
-            "?" +
-            new URLSearchParams({ ...params, callback: cb, _: Date.now() });
-          document.head.appendChild(s);
-        });
+      async function jsonpOnce(params) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+        try {
+          const response = await fetch(
+            READ_API_URL + "?" + new URLSearchParams({ ...params, _: Date.now() }),
+            { signal: controller.signal, cache: "no-store" },
+          );
+          if (!response.ok) throw Error("El servidor no respondió correctamente.");
+          return await response.json();
+        } catch (error) {
+          if (error && error.name === "AbortError")
+            throw Error("La actualización tardó demasiado.");
+          throw Error("No se pudo conectar con el servidor de Bruner.");
+        } finally {
+          clearTimeout(timer);
+        }
       }
       async function jsonp(params) {
         let lastError;
