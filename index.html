@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#552d88" />
+    <title>Objetivo mensual · Instituto Bruner</title>
+    <style>
+      :root {
+        --violet: #552d88;
+        --violet2: #7b4bad;
+        --pink: #e85f91;
+        --mint: #159872;
+        --gold: #f2b43b;
+        --ink: #292238;
+        --muted: #746d80;
+        --bg: #f7f3f9;
+        --card: #fff;
+        --line: #e9e0ee;
+        --shadow: 0 16px 42px #492a6118;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 95% 0, #f4d5e2 0, transparent 27%),
+          var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.45 Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      .wrap {
+        width: min(1050px, calc(100% - 28px));
+        margin: auto;
+      }
+      header {
+        background: linear-gradient(125deg, #3e2265, #673596 62%, #944574);
+        color: #fff;
+        padding: 25px 0 42px;
+        border-radius: 0 0 28px 28px;
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+      .eyebrow {
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.78;
+      }
+      h1 {
+        font-size: clamp(27px, 5vw, 42px);
+        line-height: 1.05;
+        margin: 5px 0;
+      }
+      .sub {
+        margin: 0;
+        opacity: 0.82;
+      }
+      .ghost {
+        border: 1px solid #ffffff55;
+        background: #ffffff18;
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .login {
+        width: min(440px, calc(100% - 28px));
+        margin: -23px auto 40px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 23px;
+        box-shadow: var(--shadow);
+        position: relative;
+      }
+      .login h2 {
+        margin: 0 0 5px;
+        font-size: 22px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 850;
+        color: var(--muted);
+        margin-top: 13px;
+      }
+      input,
+      select {
+        width: 100%;
+        margin-top: 5px;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .primary {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        background: var(--violet);
+        color: #fff;
+        font-weight: 850;
+        padding: 12px;
+        margin-top: 17px;
+        cursor: pointer;
+      }
+      .primary:disabled {
+        opacity: 0.6;
+      }
+      .error {
+        color: #922d2d;
+        background: #fff0f0;
+        border: 1px solid #ffcaca;
+        border-radius: 11px;
+        padding: 9px;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: end;
+        margin: -21px 0 18px;
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 12px;
+        border-radius: 17px;
+        box-shadow: var(--shadow);
+        position: relative;
+      }
+      .toolbar label {
+        margin: 0;
+      }
+      .stamp {
+        font-size: 12px;
+        color: var(--muted);
+        padding: 11px 3px;
+      }
+      .refresh {
+        border: 0;
+        border-radius: 11px;
+        padding: 11px 13px;
+        background: #eee8f2;
+        color: var(--violet);
+        font-weight: 850;
+        cursor: pointer;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 15px;
+        margin-bottom: 16px;
+      }
+      .personal,
+      .team {
+        border-radius: 22px;
+        padding: 21px;
+        color: #fff;
+        box-shadow: var(--shadow);
+      }
+      .personal {
+        background: linear-gradient(135deg, var(--violet), var(--violet2));
+      }
+      .team {
+        background: linear-gradient(135deg, #167c68, #20a27d);
+      }
+      .kicker {
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+      .big {
+        font-size: 38px;
+        font-weight: 950;
+        line-height: 1;
+        margin: 8px 0;
+      }
+      .hero-row {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .hero button {
+        border: 1px solid #ffffff66;
+        border-radius: 10px;
+        color: #fff;
+        background: #ffffff18;
+        padding: 8px 10px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .bar {
+        height: 10px;
+        border-radius: 99px;
+        background: #ffffff30;
+        overflow: hidden;
+        margin: 14px 0 7px;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: #fff;
+      }
+      .under {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 17px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 17px;
+        box-shadow: 0 8px 25px #492a610d;
+      }
+      .card b {
+        display: block;
+        font-size: 29px;
+        margin-top: 4px;
+      }
+      .card span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .accent {
+        color: var(--pink);
+      }
+      .green {
+        color: var(--mint);
+      }
+      .insight {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        background: #fff8e7;
+        border: 1px solid #f4dfac;
+        border-radius: 17px;
+        padding: 14px 16px;
+        margin-bottom: 17px;
+      }
+      .insight-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #f6bd48;
+        font-size: 19px;
+      }
+      .insight b {
+        display: block;
+      }
+      .insight span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 21px;
+        padding: 19px;
+        box-shadow: var(--shadow);
+        margin-bottom: 25px;
+      }
+      .panel h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .count {
+        background: #f0eaf4;
+        color: var(--violet);
+        font-size: 12px;
+        padding: 5px 9px;
+        border-radius: 99px;
+        font-weight: 850;
+      }
+      .sales {
+        display: grid;
+        gap: 10px;
+      }
+      .sale {
+        display: grid;
+        grid-template-columns: 110px 1.2fr 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .date {
+        font-weight: 850;
+        color: var(--violet);
+      }
+      .student {
+        font-weight: 850;
+      }
+      .dni,
+      .course-start {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .course {
+        font-weight: 750;
+      }
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 30px;
+      }
+      .admin-link {
+        display: block;
+        text-align: center;
+        margin: 18px auto;
+        color: var(--muted);
+        font-size: 12px;
+        background: none;
+        border: 0;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      .remember-row { display:flex; align-items:center; gap:8px; margin-top:11px; color:var(--muted); font-size:12px; font-weight:700; }
+      .remember-row input { width:auto; min-height:auto; margin:0; }
+      .forget-key { width:100%; border:0; background:transparent; color:#5c6d7a; text-decoration:underline; padding:7px; margin-top:3px; font:600 11px/1.2 "Red Hat Bruner",Arial,sans-serif; cursor:pointer; }
+      dialog {
+        border: 0;
+        border-radius: 20px;
+        padding: 0;
+        width: min(430px, calc(100% - 28px));
+        box-shadow: 0 28px 85px #24122f66;
+      }
+      dialog::backdrop {
+        background: #29183899;
+      }
+      .modal {
+        padding: 22px;
+      }
+      .modal h2 {
+        margin: 0 0 8px;
+      }
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 17px;
+      }
+      .btn {
+        border: 0;
+        border-radius: 11px;
+        padding: 10px 14px;
+        font-weight: 850;
+        cursor: pointer;
+      }
+      .secondary {
+        background: #eee8f1;
+      }
+      .save {
+        background: var(--violet);
+        color: #fff;
+      }
+      footer {
+        text-align: center;
+        color: var(--muted);
+        padding: 12px 0 35px;
+        font-size: 12px;
+      }
+      @media (max-width: 700px) {
+        header {
+          padding-bottom: 39px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .cards {
+          grid-template-columns: 1fr 1fr;
+        }
+        .toolbar {
+          grid-template-columns: 1fr auto;
+        }
+        .stamp {
+          grid-column: 1/-1;
+          padding: 0 3px;
+        }
+        .sale {
+          grid-template-columns: 85px 1fr;
+        }
+        .sale > div:last-child {
+          grid-column: 2;
+        }
+        .big {
+          font-size: 34px;
+        }
+      }
+      @media (max-width: 400px) {
+        .wrap {
+          width: calc(100% - 20px);
+        }
+        .cards {
+          gap: 8px;
+        }
+        .card {
+          padding: 13px;
+        }
+        .card b {
+          font-size: 25px;
+        }
+        .hero-row {
+          align-items: center;
+        }
+      }
+      @font-face {
+        font-family: "Vice City Bruner";
+        src: url("./assets/ViceCitySans-Bold.otf") format("opentype");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Red Hat Bruner";
+        src: url("./assets/RedHatDisplay-Light.otf") format("opentype");
+        font-display: swap;
+      }
+      :root {
+        --violet: #6519ff;
+        --violet2: #005fba;
+        --pink: #00a6e8;
+        --mint: #005fba;
+        --gold: #f2a33a;
+        --ink: #152432;
+        --muted: #5c6d7a;
+        --bg: #edf4f8;
+        --line: #d8e1e7;
+        --shadow: 0 16px 38px rgba(18, 39, 62, .09);
+      }
+      body { font-family: "Red Hat Bruner", "Segoe UI", Arial, sans-serif; font-weight: 600; }
+      body::before { content:""; position:fixed; right:-90px; bottom:-120px; width:420px; height:420px; background:url("./assets/bruner-b-color.png") center/contain no-repeat; opacity:.045; pointer-events:none; }
+      header { background: linear-gradient(120deg, #05172d, #063e73 58%, #6519ff); border-radius: 0; }
+      h1, h2, .big, button, .card b, .student { font-family: "Vice City Bruner", "Arial Black", Arial, sans-serif; }
+      .brand-logo { width: 180px; max-height: 64px; object-fit: contain; background:#fff; border-radius:8px; padding:8px 12px; box-shadow:0 10px 26px rgba(0,0,0,.2); }
+      .head-copy { display:flex; align-items:center; gap:18px; }
+      .personal { background: linear-gradient(135deg, #005fba, #6519ff); }
+      .team { background: linear-gradient(135deg, #062441, #005fba); }
+      .login, .toolbar, .panel, .card { border-radius: 8px; }
+      .primary, .refresh, .admin-link, .hero button { border-radius: 8px; }
+      .goal-race { position:relative; height:68px; margin-top:14px; overflow:hidden; }
+      .race-track { position:absolute; left:0; right:0; bottom:12px; height:5px; border-radius:99px; background:repeating-linear-gradient(90deg,#ffffffaa 0 18px,#ffffff35 18px 28px); }
+      .race-horse { position:absolute; left:0; bottom:18px; font-size:35px; line-height:1; transform:translateX(-3px); transition:left .8s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 4px 4px #0004); }
+      .race-finish { position:absolute; right:0; bottom:15px; font-size:35px; }
+      .race-label { position:absolute; left:0; top:0; font-size:11px; font-weight:850; letter-spacing:.08em; text-transform:uppercase; opacity:.8; }
+      .notice { position:fixed; left:50%; bottom:22px; transform:translate(-50%,20px); opacity:0; z-index:100; padding:12px 18px; border-radius:8px; background:#062441; color:white; box-shadow:var(--shadow); transition:.2s; pointer-events:none; }
+      .notice.show { transform:translate(-50%,0); opacity:1; }
+      .commission-panel { margin-bottom:17px; background:linear-gradient(135deg,#05172d,#063e73); color:#fff; border:0; }
+      .commission-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+      .commission-kpi { padding:15px; border:1px solid #ffffff25; border-radius:8px; background:#ffffff0d; }
+      .commission-kpi span { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; opacity:.72; }
+      .commission-kpi strong { display:block; margin-top:7px; font:700 clamp(20px,3vw,29px)/1 "Vice City Bruner",Arial,sans-serif; }
+      .commission-kpi.prize { background:linear-gradient(135deg,#6519ff55,#00a6e833); }
+      .commission-note { margin:13px 0 0; color:#d6e8f6; font-size:13px; }
+      .simulator { display:grid; grid-template-columns:minmax(180px,.7fr) 1fr 1fr; gap:12px; align-items:end; margin-top:14px; }
+      .sim-result { padding:12px; border-radius:8px; background:#edf4f8; border:1px solid var(--line); }
+      .sim-result span { display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+      .sim-result strong { display:block; color:var(--brand,#005fba); font:700 22px/1.2 "Vice City Bruner",Arial,sans-serif; margin-top:4px; }
+      .tier-list { display:flex; gap:7px; flex-wrap:wrap; margin-top:12px; }
+      .tier-list span { padding:6px 9px; border-radius:999px; background:#eaf2f8; color:#405466; font-size:11px; }
+      .commission-table-wrap { overflow-x:auto; margin-top:12px; }
+      .commission-table { width:100%; min-width:760px; border-collapse:collapse; }
+      .commission-table th,.commission-table td { padding:12px 10px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; }
+      .commission-table th { color:#005fba; font:700 11px/1.2 "Vice City Bruner",Arial,sans-serif; text-transform:uppercase; letter-spacing:.04em; background:#edf4f8; }
+      .commission-table td:first-child { font-family:"Vice City Bruner",Arial,sans-serif; }
+      .commission-table .money { font-variant-numeric:tabular-nums; font-weight:800; }
+      .commission-table .bonus { color:#6519ff; }
+      .commission-summary { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-top:14px; padding:14px; background:#062441; color:#fff; border-radius:8px; }
+      .commission-summary strong { font:700 25px/1 "Vice City Bruner",Arial,sans-serif; }
+      @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
+      @media(max-width:700px){ .commission-grid,.simulator{grid-template-columns:1fr}.commission-kpi strong{font-size:24px} }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap head">
+        <div class="head-copy">
+          <img class="brand-logo" src="./assets/bruner-logo-principal.png" alt="Instituto Bruner" />
+          <div>
+          <div class="eyebrow">Instituto Bruner</div>
+          <h1 id="title">Objetivo mensual</h1>
+          <p class="sub">Tu objetivo, tu ritmo, tu progreso.</p></div>
+        </div>
+        <button class="ghost hidden" id="logout">Salir</button>
+      </div>
+    </header>
+    <section class="login" id="login">
+      <h2>Ingresá a tu panel</h2>
+      <div class="muted">Elegí tu nombre para ver tu avance del mes.</div>
+      <form id="loginForm">
+        <label
+          >Tu nombre<select id="advisor" required>
+            <option value="">Cargando asesoras…</option>
+          </select></label
+        ><label>Clave personal<input id="advisorPin" type="password" required autocomplete="current-password" /></label>
+        <label class="remember-row"><input id="rememberPin" type="checkbox" checked /> Recordar clave en este dispositivo</label>
+        <button type="button" class="forget-key hidden" id="forgetPin">Olvidar clave guardada</button>
+        <button class="primary" id="loginButton" disabled>
+          Ver mi avance
+        </button>
+        <div class="error hidden" id="loginError"></div>
+      </form>
+      <button class="admin-link" id="adminOpen">
+        Vista supervisor
+      </button>
+    </section>
+    <main class="wrap hidden" id="app">
+      <section class="toolbar">
+        <label>Mes<select id="month"></select></label
+        ><button class="refresh" id="refresh">↻ Actualizar</button>
+        <div class="stamp" id="stamp"></div>
+      </section>
+      <section class="hero">
+        <article class="personal">
+          <div class="kicker">Mi objetivo personal</div>
+          <div class="hero-row">
+            <div class="big">
+              <span id="mySales">0</span> / <span id="myGoal">—</span>
+            </div>
+            <button id="editGoal">Editar meta</button>
+          </div>
+          <div class="bar"><i id="myBar"></i></div>
+          <div class="under">
+            <span id="myPercent">Definí tu objetivo</span
+            ><span id="myRemaining"></span>
+          </div>
+        </article>
+        <article class="team">
+          <div class="kicker">Objetivo grupal</div>
+          <div class="big">
+            <span id="teamSales">0</span> / <span id="teamGoal">—</span>
+          </div>
+          <div class="bar"><i id="teamBar"></i></div>
+          <div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="teamHorse">🐎</span><span class="race-finish">🏁</span></div>
+          <div class="under">
+            <span id="teamPercent">Meta del equipo</span
+            ><span id="teamRemaining"></span>
+          </div>
+        </article>
+      </section>
+      <section class="panel commission-panel">
+        <div class="panel-head"><div><h2>Mi comisión estimada</h2><div style="color:#c9ddeb">Calculada según tus ventas reales del mes</div></div></div>
+        <div class="commission-grid">
+          <div class="commission-kpi"><span>Valor por venta</span><strong id="commissionRate">$0</strong></div>
+          <div class="commission-kpi"><span>Comisión base</span><strong id="commissionBase">$0</strong></div>
+          <div class="commission-kpi prize"><span id="commissionTotalLabel">Total estimado</span><strong id="commissionTotal">$0</strong></div>
+        </div>
+        <p class="commission-note" id="commissionNote">El premio grupal suma un 10% cuando el equipo alcanza su objetivo.</p>
+      </section>
+      <section class="cards">
+        <article class="card">
+          <span>VENTAS DE HOY</span><b id="todayCard">0</b>
+        </article>
+        <article class="card">
+          <span>ESTA SEMANA</span><b id="weekCard">0</b>
+        </article>
+        <article class="card">
+          <span>RITMO SUGERIDO</span><b class="green" id="dailyCard">—</b
+          ><span id="dailyHint">ventas por día</span>
+        </article>
+        <article class="card">
+          <span>PROYECCIÓN DEL MES</span
+          ><b class="accent" id="projectionCard">—</b
+          ><span>si mantenés tu ritmo</span>
+        </article>
+      </section>
+      <aside class="insight">
+        <div class="insight-icon">💡</div>
+        <div>
+          <b id="insightTitle">Tu foco de hoy</b>
+          <span id="insightText">Cargando tu avance…</span>
+        </div>
+      </aside>
+      <section class="panel">
+        <div class="panel-head"><div><h2>Simulador de comisión</h2><div class="muted">Probá una cantidad de ventas. Este cálculo no modifica tu objetivo personal.</div></div></div>
+        <div class="simulator">
+          <label>Ventas proyectadas<input id="simSales" type="number" min="0" max="999" value="20" inputmode="numeric" /></label>
+          <div class="sim-result"><span>Sin premio grupal</span><strong id="simBase">$0</strong></div>
+          <div class="sim-result"><span>Con premio +10%</span><strong id="simPrize">$0</strong></div>
+        </div>
+        <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Detalle de mis ventas</h2>
+            <div class="muted">Inscripciones cargadas a tu nombre</div>
+          </div>
+          <span class="count" id="count">0 ventas</span>
+        </div>
+        <div class="sales" id="salesList"></div>
+      </section>
+    </main>
+    <main class="wrap hidden" id="adminApp">
+      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><div class="stamp" id="adminStamp"></div></section>
+      <section class="hero">
+        <article class="personal"><div class="kicker">Objetivo mensual grupal</div><div class="hero-row"><div class="big"><span id="adminTeamSales">0</span> / <span id="adminTeamGoalView">—</span></div><button id="adminEditTeamGoal">Editar meta</button></div><div class="bar"><i id="adminTeamBar"></i></div><div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="adminTeamHorse">🐎</span><span class="race-finish">🏁</span></div><div class="under"><span id="adminTeamPercent">Meta del equipo</span><span id="adminTeamRemaining"></span></div></article>
+        <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
+      </section>
+      <section class="panel"><div class="panel-head"><div><h2>Ranking mensual</h2><div class="muted">Ventas reales y objetivo personal declarado</div></div></div><div class="sales" id="adminRanking"></div></section>
+      <section class="panel">
+        <div class="panel-head"><div><h2>Cuadro de comisiones</h2><div class="muted">Estimación mensual según el esquema vigente</div></div><span class="count" id="adminCommissionStatus">Sin premio grupal</span></div>
+        <div class="commission-table-wrap"><table class="commission-table"><thead><tr><th>Asesora</th><th>Ventas</th><th>Valor por venta</th><th>Comisión base</th><th>Premio 10%</th><th>Total estimado</th></tr></thead><tbody id="adminCommissionRows"></tbody></table></div>
+        <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
+        <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
+      </section>
+    </main>
+    <dialog id="goalDialog">
+      <form class="modal" id="goalForm">
+        <h2>Mi objetivo del mes</h2>
+        <div class="muted">Elegí una meta que te motive y te desafíe.</div>
+        <label
+          >Cantidad de ventas<input
+            id="goalInput"
+            type="number"
+            min="0"
+            max="999"
+            required
+            inputmode="numeric"
+        /></label>
+        <div class="actions">
+          <button type="button" class="btn secondary" data-close>
+            Cancelar</button
+          ><button class="btn save">Guardar</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="adminDialog">
+      <form class="modal" id="adminForm">
+        <h2>Nahuel — Supervisor</h2>
+        <div class="muted">Ingresá con tu clave de administración.</div>
+        <label>Clave administradora<input id="adminPin" type="password" required /></label>
+        <div class="actions">
+          <button type="button" class="btn secondary" data-close>
+            Cancelar</button
+          ><button class="btn save">Ingresar</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="teamGoalDialog"><form class="modal" id="teamGoalForm"><h2>Objetivo grupal</h2><div class="muted">Define la meta total del equipo para el mes seleccionado.</div><label>Objetivo total<input id="adminGoal" type="number" min="0" max="9999" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
+    <div class="notice" id="notice"></div>
+    <footer>Datos actualizados desde las planillas de Instituto Bruner</footer>
+    <script>
+      const API_URL = "https://script.google.com/macros/s/AKfycbyhKiGC0ZzG2KpOc-TRoOih2qXUTsG2ckWi98Blyc1j0Fma_R0ec5QcAoysElUBvCo/exec",
+        state = { token: "", adminToken: "", month: "", data: null, adminData: null };
+      const $ = (x) => document.getElementById(x),
+        esc = (s) =>
+          String(s ?? "").replace(
+            /[&<>\"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
+      function jsonp(params) {
+        return new Promise((resolve, reject) => {
+          if (API_URL.startsWith("TODO_"))
+            return reject(Error("TODO: falta publicar el nuevo backend."));
+          const cb =
+              "bruner_" + Date.now() + Math.random().toString(16).slice(2),
+            s = document.createElement("script"),
+            t = setTimeout(
+              () => done(Error("La actualización tardó demasiado.")),
+              60000,
+            );
+          function done(e, v) {
+            clearTimeout(t);
+            delete window[cb];
+            s.remove();
+            e ? reject(e) : resolve(v);
+          }
+          window[cb] = (v) => done(null, v);
+          s.onerror = () => done(Error("No se pudo conectar con Drive."));
+          s.src =
+            API_URL +
+            "?" +
+            new URLSearchParams({ ...params, callback: cb, _: Date.now() });
+          document.head.appendChild(s);
+        });
+      }
+      const daysLeft = (k) => {
+        const [y, m] = k.split("-").map(Number),
+          n = new Date(),
+          last = new Date(y, m, 0);
+        return n.getFullYear() === y && n.getMonth() + 1 === m
+          ? Math.max(1, last.getDate() - n.getDate() + 1)
+          : last.getDate();
+      };
+      const ars = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+      function commissionFor(sales) {
+        const qty = Math.max(0, Math.floor(Number(sales) || 0));
+        const rate = qty === 0 ? 0 : qty < 20 ? 18000 : qty < 30 ? 20000 : qty < 40 ? 21000 : 22000;
+        const base = qty * rate;
+        return { qty, rate, base, withPrize: Math.round(base * 1.1) };
+      }
+      function renderSimulator() {
+        const c = commissionFor($("simSales").value);
+        $("simBase").textContent = ars.format(c.base);
+        $("simPrize").textContent = ars.format(c.withPrize);
+      }
+      function showNotice(message) {
+        const n = $("notice");
+        n.textContent = message;
+        n.classList.add("show");
+        clearTimeout(showNotice.timer);
+        showNotice.timer = setTimeout(() => n.classList.remove("show"), 2600);
+      }
+      async function login(e) {
+        e.preventDefault();
+        const b = e.submitter;
+        b.disabled = true;
+        try {
+          const d = await jsonp({
+            action: "login",
+            advisor: $("advisor").value,
+            pin: $("advisorPin").value,
+          });
+          if (!d.ok) throw Error(d.error);
+          const savedKey = "bruner_pin_" + $("advisor").value;
+          if ($("rememberPin").checked) localStorage.setItem(savedKey, $("advisorPin").value);
+          else localStorage.removeItem(savedKey);
+          state.token = d.token;
+          state.month = d.defaultMonth;
+          $("login").classList.add("hidden");
+          $("app").classList.remove("hidden");
+          $("logout").classList.remove("hidden");
+          await load();
+        } catch (x) {
+          $("loginError").textContent = x.message;
+          $("loginError").classList.remove("hidden");
+        } finally {
+          b.disabled = false;
+        }
+      }
+      async function load(forceRefresh = false) {
+        try {
+          const d = await jsonp({
+            action: "myDashboard",
+            token: state.token,
+            month: state.month,
+            refresh: forceRefresh ? "1" : "0",
+          });
+          if (!d.ok) throw Error(d.error);
+          state.data = d;
+          state.month = d.month;
+          render();
+        } catch (x) {
+          alert(x.message);
+          if (/sesión/i.test(x.message)) logout();
+        }
+      }
+      function render() {
+        const d = state.data;
+        $("title").textContent = "¡Vamos, " + d.advisor + "! ✨";
+        $("month").innerHTML = d.months
+          .map(
+            (m) =>
+              `<option value="${m.key}" ${m.key === d.month ? "selected" : ""}>${esc(m.label)}</option>`,
+          )
+          .join("");
+        $("stamp").textContent = "Actualizado " + d.updatedAt;
+        const s = d.personal.sales,
+          g = d.personal.goal || 0,
+          r = Math.max(0, g - s),
+          p = g ? Math.round((s / g) * 100) : 0,
+          left = daysLeft(d.month),
+          daily = g && r ? Math.ceil(r / left) : 0;
+        $("mySales").textContent = s;
+        $("myGoal").textContent = g || "—";
+        $("myBar").style.width = Math.min(100, p) + "%";
+        $("myPercent").textContent = g
+          ? p + "% de tu objetivo"
+          : "Definí tu objetivo";
+        $("myRemaining").textContent = g
+          ? r
+            ? "Faltan " + r
+            : "¡Objetivo cumplido! 🎉"
+          : "";
+        $("todayCard").textContent = d.personal.today;
+        $("weekCard").textContent = d.personal.thisWeek;
+        $("dailyCard").textContent = g ? (r ? daily : "✓") : "—";
+        $("dailyHint").textContent =
+          g && r ? "ventas por día (" + left + " días)" : "ventas por día";
+        $("projectionCard").textContent = d.personal.projection;
+        const ts = d.team.sales,
+          tg = d.team.goal || 0,
+          tr = Math.max(0, tg - ts),
+          tp = tg ? Math.round((ts / tg) * 100) : 0;
+        $("teamSales").textContent = ts;
+        $("teamGoal").textContent = tg || "—";
+        $("teamBar").style.width = Math.min(100, tp) + "%";
+        $("teamHorse").style.left = `calc(${Math.min(94, tp * .94)}% - 8px)`;
+        $("teamPercent").textContent = tg
+          ? tp + "% alcanzado"
+          : "Pendiente de administración";
+        $("teamRemaining").textContent = tg
+          ? tr
+            ? "Faltan " + tr
+            : "¡Meta alcanzada! 🎉"
+          : "";
+        const commission = commissionFor(s);
+        const teamReached = tg > 0 && ts >= tg;
+        $("commissionRate").textContent = ars.format(commission.rate);
+        $("commissionBase").textContent = ars.format(commission.base);
+        $("commissionTotal").textContent = ars.format(teamReached ? commission.withPrize : commission.base);
+        $("commissionTotalLabel").textContent = teamReached ? "Total con premio +10%" : "Total estimado";
+        $("commissionNote").textContent = teamReached
+          ? `¡Objetivo grupal alcanzado! Premio estimado: ${ars.format(commission.withPrize - commission.base)}.`
+          : "El premio grupal suma un 10% cuando el equipo alcanza su objetivo.";
+        if (!g) {
+          $("insightTitle").textContent = "Elegí tu meta personal";
+          $("insightText").textContent =
+            "Cuando la definas, te mostramos el ritmo diario exacto para alcanzarla.";
+        } else if (!r) {
+          $("insightTitle").textContent = "¡Objetivo cumplido!";
+          $("insightText").textContent =
+            "Todo lo que vendas ahora supera tu meta. Seguí impulsando tu mes.";
+        } else if (d.personal.projection >= g) {
+          $("insightTitle").textContent = "Vas a ritmo de objetivo";
+          $("insightText").textContent =
+            "Si sostenés este ritmo, proyectás " +
+            d.personal.projection +
+            " ventas al cierre del mes.";
+        } else {
+          $("insightTitle").textContent = "Tu foco desde hoy";
+          $("insightText").textContent =
+            "Te faltan " +
+            r +
+            " ventas: apuntá a " +
+            daily +
+            " por día para llegar a tu meta.";
+        }
+        $("goalInput").value = g || "";
+        $("count").textContent = s + " " + (s === 1 ? "venta" : "ventas");
+        $("salesList").innerHTML = d.sales.length
+          ? d.sales
+              .map(
+                (v) =>
+                  `<article class="sale"><div><div class="date">${esc(v.saleDate)}</div><div class="dni">Fecha de venta</div></div><div><div class="student">${esc(v.student)}</div><div class="dni">DNI ${esc(v.dni || "sin informar")}</div></div><div><div class="course">${esc(v.course)}</div><div class="course-start">Inicio: ${esc(v.startDate || "sin informar")}</div></div></article>`,
+              )
+              .join("")
+          : '<div class="empty">Todavía no hay ventas cargadas para este mes.</div>';
+      }
+      function logout() {
+        state.token = "";
+        state.adminToken = "";
+        state.data = null;
+        state.adminData = null;
+        $("app").classList.add("hidden");
+        $("adminApp").classList.add("hidden");
+        $("logout").classList.add("hidden");
+        $("login").classList.remove("hidden");
+        $("title").textContent = "Objetivo mensual";
+      }
+      $("loginForm").onsubmit = login;
+      function loadSavedPin() {
+        const advisor = $("advisor").value, saved = advisor ? localStorage.getItem("bruner_pin_" + advisor) || "" : "";
+        $("advisorPin").value = saved;
+        $("rememberPin").checked = true;
+        $("forgetPin").classList.toggle("hidden", !saved);
+      }
+      $("advisor").onchange = loadSavedPin;
+      $("forgetPin").onclick = () => {
+        const advisor = $("advisor").value;
+        if (advisor) localStorage.removeItem("bruner_pin_" + advisor);
+        $("advisorPin").value = "";
+        $("forgetPin").classList.add("hidden");
+        showNotice("Clave olvidada en este dispositivo");
+      };
+      $("logout").onclick = logout;
+      $("refresh").onclick = () => load(true);
+      $("month").onchange = (e) => {
+        state.month = e.target.value;
+        load();
+      };
+      $("simSales").oninput = renderSimulator;
+      renderSimulator();
+      $("editGoal").onclick = () => $("goalDialog").showModal();
+      document
+        .querySelectorAll("[data-close]")
+        .forEach((b) => (b.onclick = () => b.closest("dialog").close()));
+      $("goalForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const b = e.submitter;
+        b.disabled = true;
+        try {
+          const d = await jsonp({
+            action: "setPersonalGoal",
+            token: state.token,
+            month: state.month,
+            goal: $("goalInput").value,
+          });
+          if (!d.ok) throw Error(d.error);
+          $("goalDialog").close();
+          showNotice("Objetivo personal guardado ✓");
+          await load();
+        } catch (x) {
+          alert(x.message);
+        } finally {
+          b.disabled = false;
+        }
+      };
+      $("adminOpen").onclick = () => {
+        $("adminDialog").showModal();
+      };
+      $("adminForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const b = e.submitter;
+        b.disabled = true;
+        try {
+          const d = await jsonp({
+            action: "adminLogin",
+            pin: $("adminPin").value,
+          });
+          if (!d.ok) throw Error(d.error);
+          state.adminToken = d.token;
+          state.month = d.defaultMonth;
+          $("adminDialog").close();
+          $("login").classList.add("hidden");
+          $("adminApp").classList.remove("hidden");
+          $("logout").classList.remove("hidden");
+          $("title").textContent = "Panel de Nahuel — Supervisor";
+          await loadAdmin();
+        } catch (x) {
+          alert(x.message);
+        } finally {
+          b.disabled = false;
+        }
+      };
+      async function loadAdmin(forceRefresh = false) {
+        const d = await jsonp({ action: "adminDashboard", token: state.adminToken, month: state.month, refresh: forceRefresh ? "1" : "0" });
+        if (!d.ok) throw Error(d.error);
+        state.adminData = d;
+        state.month = d.month;
+        $("adminDashboardMonth").innerHTML = d.months.map((m) => `<option value="${m.key}" ${m.key === d.month ? "selected" : ""}>${esc(m.label)}</option>`).join("");
+        $("adminStamp").textContent = "Actualizado " + d.updatedAt;
+        const goal = d.teamGoal || 0, remaining = Math.max(0, goal - d.teamSales), percent = goal ? Math.round(d.teamSales / goal * 100) : 0;
+        $("adminTeamSales").textContent = d.teamSales;
+        $("adminTeamGoalView").textContent = goal || "—";
+        $("adminTeamBar").style.width = Math.min(100, percent) + "%";
+        $("adminTeamHorse").style.left = `calc(${Math.min(94, percent * .94)}% - 8px)`;
+        $("adminTeamPercent").textContent = goal ? percent + "% alcanzado" : "Definí el objetivo grupal";
+        $("adminTeamRemaining").textContent = goal ? (remaining ? "Faltan " + remaining : "¡Meta alcanzada! 🎉") : "";
+        $("adminGoal").value = goal || "";
+        $("adminRanking").innerHTML = d.advisors.map((a, i) => {
+          const g = a.goal || 0, p = g ? Math.round(a.sales / g * 100) : 0;
+          return `<article class="sale"><div><div class="student">#${i + 1} · ${esc(a.advisor)}</div><div class="dni">${g ? p + "% de su meta" : "Meta personal pendiente"}</div></div><div><div class="course">${a.sales} ventas</div><div class="course-start">Objetivo: ${g || "—"}</div></div><div class="bar"><i style="width:${Math.min(100, p)}%"></i></div></article>`;
+        }).join("");
+        const teamReached = goal > 0 && d.teamSales >= goal;
+        let commissionsTotal = 0;
+        $("adminCommissionStatus").textContent = teamReached ? "Premio grupal +10%" : "Sin premio grupal";
+        $("adminCommissionRows").innerHTML = d.advisors.map((a) => {
+          const c = commissionFor(a.sales), bonus = teamReached ? c.withPrize - c.base : 0, total = c.base + bonus;
+          commissionsTotal += total;
+          return `<tr><td>${esc(a.advisor)}</td><td>${a.sales}</td><td class="money">${ars.format(c.rate)}</td><td class="money">${ars.format(c.base)}</td><td class="money bonus">${bonus ? "+" + ars.format(bonus) : ars.format(0)}</td><td class="money">${ars.format(total)}</td></tr>`;
+        }).join("");
+        $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
+      }
+      $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
+      $("adminDashboardMonth").onchange = (e) => { state.month = e.target.value; loadAdmin().catch((x) => alert(x.message)); };
+      $("adminEditTeamGoal").onclick = () => $("teamGoalDialog").showModal();
+      $("teamGoalForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const b = e.submitter; b.disabled = true;
+        try {
+          const d = await jsonp({ action: "setTeamGoal", token: state.adminToken, month: state.month, goal: $("adminGoal").value });
+          if (!d.ok) throw Error(d.error);
+          $("teamGoalDialog").close(); showNotice("Objetivo grupal guardado ✓"); await loadAdmin();
+        } catch (x) { alert(x.message); } finally { b.disabled = false; }
+      };
+      async function loadAdvisors() {
+        const fallbackAdvisors = [
+          "Lore",
+          "Mica",
+          "Vale",
+          "Susi",
+          "Clau",
+          "Mati P",
+          "Meli",
+          "Juli",
+        ];
+        try {
+          const d = await jsonp({ action: "listAdvisors" });
+          if (!d.ok) throw Error(d.error);
+          $("advisor").innerHTML =
+            '<option value="">Seleccioná tu nombre</option>' +
+            d.advisors
+              .map(
+                (name) => `<option value="${esc(name)}">${esc(name)}</option>`,
+              )
+              .join("");
+          $("loginButton").disabled = false;
+        } catch (x) {
+          $("advisor").innerHTML =
+            '<option value="">Seleccioná tu nombre</option>' +
+            fallbackAdvisors
+              .map(
+                (name) => `<option value="${esc(name)}">${esc(name)}</option>`,
+              )
+              .join("");
+          $("loginButton").disabled = false;
+        }
+      }
+      loadAdvisors();
+    </script>
+  </body>
+</html>
