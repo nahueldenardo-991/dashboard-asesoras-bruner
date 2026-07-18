@@ -665,6 +665,7 @@
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
       </section>
       <section class="panel"><div class="panel-head"><div><h2>Ranking mensual</h2><div class="muted">Ventas reales y objetivo personal declarado</div></div></div><div class="sales" id="adminRanking"></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>Detalle de ventas del equipo</h2><div class="muted">Cada inscripción y la persona responsable de la venta</div></div><span class="count" id="adminSalesCount">0 ventas</span></div><div class="sales" id="adminSalesList"></div></section>
       <section class="panel">
         <div class="panel-head"><div><h2>Cuadro de comisiones</h2><div class="muted">Estimación mensual según el esquema vigente</div></div><span class="count" id="adminCommissionStatus">Sin premio grupal</span></div>
         <div class="commission-table-wrap"><table class="commission-table"><thead><tr><th>Asesora</th><th>Ventas</th><th>Valor por venta</th><th>Comisión base</th><th>Premio 10%</th><th>Total estimado</th></tr></thead><tbody id="adminCommissionRows"></tbody></table></div>
@@ -1131,6 +1132,8 @@
           const g = a.goal || 0, p = g ? Math.round(a.sales / g * 100) : 0;
           return `<article class="sale"><div><div class="student">#${i + 1} · ${esc(a.advisor)}</div><div class="dni">${g ? p + "% de su meta" : "Meta personal pendiente"}</div></div><div><div class="course">${a.sales} ventas</div><div class="course-start">Objetivo: ${g || "—"}</div></div><div class="bar"><i style="width:${Math.min(100, p)}%"></i></div></article>`;
         }).join("");
+        $("adminSalesCount").textContent = d.sales.length + (d.sales.length === 1 ? " venta" : " ventas");
+        $("adminSalesList").innerHTML = d.sales.length ? d.sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas cargadas para este mes.</div>';
         const teamReached = goal > 0 && d.teamSales >= goal;
         let commissionsTotal = 0;
         $("adminCommissionStatus").textContent = teamReached ? "Premio grupal +10%" : "Sin premio grupal";
