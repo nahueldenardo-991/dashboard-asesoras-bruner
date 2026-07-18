@@ -37,6 +37,20 @@ export default async (request: Request) => {
     const incoming = new URL(request.url);
     incoming.searchParams.delete("callback");
     incoming.searchParams.delete("_");
+    const action = incoming.searchParams.get("action") || "";
+    const sharedStore = getStore({ name: "bruner-settings", consistency: "strong" });
+    if (action === "partnerDashboard" && incoming.searchParams.get("refresh") !== "1") {
+      const token = incoming.searchParams.get("token") || "";
+      const month = incoming.searchParams.get("month") || "";
+      const session = token ? await sharedStore.get("management-sessions/" + token, { type: "json" }) as { expiresAt?: number } | null : null;
+      const cached = month && Number(session?.expiresAt) > Date.now()
+        ? await sharedStore.get("management-dashboard/" + month, { type: "json" }) as { savedAt?: number; data?: Record<string, unknown> } | null
+        : null;
+      if (cached?.data && Date.now() - Number(cached.savedAt || 0) < 120000) {
+        const setting = await sharedStore.get("working-days/" + month, { type: "json" }) as { days?: number } | null;
+        return json({ ...cached.data, workingDaysOverride: setting?.days || 0 });
+      }
+    }
     const target = new URL(APPS_SCRIPT_URL);
     incoming.searchParams.forEach((value, key) => target.searchParams.set(key, value));
 
@@ -47,6 +61,12 @@ export default async (request: Request) => {
     const body = await response.text();
     if (!response.ok) throw new Error(`Google respondió ${response.status}`);
     const parsed = JSON.parse(body);
+    if (parsed.ok && action === "adminLogin" && parsed.token) {
+      await sharedStore.setJSON("management-sessions/" + parsed.token, { expiresAt: Date.now() + 21600000 });
+    }
+    if (parsed.ok && action === "partnerDashboard" && parsed.month) {
+      await sharedStore.setJSON("management-dashboard/" + parsed.month, { savedAt: Date.now(), data: parsed });
+    }
     if (parsed.ok && ["myDashboard", "adminDashboard", "partnerDashboard"].includes(incoming.searchParams.get("action") || "")) {
       const month = String(parsed.month || incoming.searchParams.get("month") || "");
       const setting = month ? await getStore({ name: "bruner-settings", consistency: "strong" }).get("working-days/" + month, { type: "json" }) as { days?: number } | null : null;
