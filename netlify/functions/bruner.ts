@@ -47,7 +47,7 @@ export default async (request: Request) => {
     const body = await response.text();
     if (!response.ok) throw new Error(`Google respondió ${response.status}`);
     const parsed = JSON.parse(body);
-    if (parsed.ok && (incoming.searchParams.get("action") === "myDashboard" || incoming.searchParams.get("action") === "adminDashboard")) {
+    if (parsed.ok && ["myDashboard", "adminDashboard", "partnerDashboard"].includes(incoming.searchParams.get("action") || "")) {
       const month = String(parsed.month || incoming.searchParams.get("month") || "");
       const setting = month ? await getStore({ name: "bruner-settings", consistency: "strong" }).get("working-days/" + month, { type: "json" }) as { days?: number } | null : null;
       parsed.workingDaysOverride = setting?.days || 0;
