@@ -517,6 +517,12 @@
       .commission-table .bonus { color:#6519ff; }
       .commission-summary { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-top:14px; padding:14px; background:#062441; color:#fff; border-radius:8px; }
       .commission-summary strong { font:700 25px/1 "Vice City Bruner",Arial,sans-serif; }
+      .sale-button { border:0; border-radius:8px; padding:11px 15px; background:linear-gradient(135deg,#005fba,#6519ff); color:#fff; font-weight:850; cursor:pointer; white-space:nowrap; }
+      .sales-form-shell { margin:-21px auto 30px; position:relative; }
+      .sales-form-head { display:flex; justify-content:space-between; align-items:center; gap:12px; background:#fff; border:1px solid var(--line); padding:13px 15px; border-radius:8px 8px 0 0; box-shadow:var(--shadow); }
+      .sales-form-head h2 { margin:0; font-size:20px; }
+      .sales-form-actions { display:flex; gap:8px; flex-wrap:wrap; }
+      .sales-form-frame { width:100%; min-height:78vh; border:1px solid var(--line); border-top:0; background:#fff; border-radius:0 0 8px 8px; }
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator{grid-template-columns:1fr}.commission-kpi strong{font-size:24px} }
     </style>
@@ -557,7 +563,7 @@
     <main class="wrap hidden" id="app">
       <section class="toolbar">
         <label>Mes<select id="month"></select></label
-        ><button class="refresh" id="refresh">↻ Actualizar</button>
+        ><button class="refresh" id="refresh">↻ Actualizar</button><button class="sale-button" id="openMySale">Cargar mi venta</button>
         <div class="stamp" id="stamp"></div>
       </section>
       <section class="hero">
@@ -642,7 +648,7 @@
       </section>
     </main>
     <main class="wrap hidden" id="adminApp">
-      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><div class="stamp" id="adminStamp"></div></section>
+      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminStamp"></div></section>
       <section class="hero">
         <article class="personal"><div class="kicker">Objetivo mensual grupal</div><div class="hero-row"><div class="big"><span id="adminTeamSales">0</span> / <span id="adminTeamGoalView">—</span></div><button id="adminEditTeamGoal">Editar meta</button></div><div class="bar"><i id="adminTeamBar"></i></div><div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="adminTeamHorse">🐎</span><span class="race-finish">🏁</span></div><div class="under"><span id="adminTeamPercent">Meta del equipo</span><span id="adminTeamRemaining"></span></div></article>
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
@@ -654,6 +660,10 @@
         <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
         <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
       </section>
+    </main>
+    <main class="wrap hidden sales-form-shell" id="salesFormPage">
+      <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda en el formulario y la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
+      <iframe class="sales-form-frame" id="salesFormFrame" title="Formulario de inscripción Bruner"></iframe>
     </main>
     <dialog id="goalDialog">
       <form class="modal" id="goalForm">
@@ -740,6 +750,22 @@
           ? Math.max(1, last.getDate() - n.getDate() + 1)
           : last.getDate();
       };
+      const SALES_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdKMnIRbUM02qiaHA9AJ-asZ0pj1J5-tWmtKbCKbmwG1ygxWw/viewform";
+      let salesReturnView = "app";
+      function openSalesForm(advisor, returnView) {
+        salesReturnView = returnView;
+        const formAdvisor = advisor === "Clau" ? "Claudia" : advisor || "";
+        const params = new URLSearchParams({ embedded: "true" });
+        if (formAdvisor) params.set("entry.1413307859", formAdvisor);
+        const embeddedUrl = SALES_FORM_URL + "?" + params.toString();
+        $("salesFormFrame").src = embeddedUrl;
+        $("salesFormTitle").textContent = advisor ? "Cargar mi venta · " + advisor : "Cargar venta";
+        $("app").classList.add("hidden");
+        $("adminApp").classList.add("hidden");
+        $("salesFormPage").classList.remove("hidden");
+        $("title").textContent = advisor ? "Nueva inscripción" : "Cargar venta";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
       const ars = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
       function commissionFor(sales) {
         const qty = Math.max(0, Math.floor(Number(sales) || 0));
@@ -929,6 +955,14 @@
       };
       $("simSales").oninput = renderSimulator;
       renderSimulator();
+      $("openMySale").onclick = () => openSalesForm(state.data && state.data.advisor, "app");
+      $("openAdminSale").onclick = () => openSalesForm("", "adminApp");
+      $("backFromSale").onclick = () => {
+        $("salesFormPage").classList.add("hidden");
+        $(salesReturnView).classList.remove("hidden");
+        $("salesFormFrame").src = "about:blank";
+        $("title").textContent = salesReturnView === "app" && state.data ? "¡Vamos, " + state.data.advisor + "! ✨" : "Panel de Nahuel — Supervisor";
+      };
       $("editGoal").onclick = () => $("goalDialog").showModal();
       document
         .querySelectorAll("[data-close]")
