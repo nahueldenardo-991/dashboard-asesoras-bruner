@@ -742,7 +742,7 @@
                 "'": "&#39;",
               })[c],
           );
-      function jsonp(params) {
+      function jsonpOnce(params) {
         return new Promise((resolve, reject) => {
           if (API_URL.startsWith("TODO_"))
             return reject(Error("TODO: falta publicar el nuevo backend."));
@@ -751,7 +751,7 @@
             s = document.createElement("script"),
             t = setTimeout(
               () => done(Error("La actualización tardó demasiado.")),
-              60000,
+              15000,
             );
           function done(e, v) {
             clearTimeout(t);
@@ -761,12 +761,26 @@
           }
           window[cb] = (v) => done(null, v);
           s.onerror = () => done(Error("No se pudo conectar con Drive."));
+          s.referrerPolicy = "no-referrer";
           s.src =
             API_URL +
             "?" +
             new URLSearchParams({ ...params, callback: cb, _: Date.now() });
           document.head.appendChild(s);
         });
+      }
+      async function jsonp(params) {
+        let lastError;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            return await jsonpOnce(params);
+          } catch (error) {
+            lastError = error;
+            if (attempt < 2)
+              await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+          }
+        }
+        throw lastError || Error("No se pudo conectar con Drive.");
       }
       const daysLeft = (k) => {
         const [y, m] = k.split("-").map(Number),
