@@ -518,6 +518,7 @@
       .commission-summary { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-top:14px; padding:14px; background:#062441; color:#fff; border-radius:8px; }
       .commission-summary strong { font:700 25px/1 "Vice City Bruner",Arial,sans-serif; }
       .sale-button { border:0; border-radius:8px; padding:11px 15px; background:linear-gradient(135deg,#005fba,#6519ff); color:#fff; font-weight:850; cursor:pointer; white-space:nowrap; }
+      .course-guide{scroll-margin-top:18px}.course-guide-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.course-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.course-start-card{border:1px solid var(--line);border-radius:10px;padding:15px;background:linear-gradient(145deg,#fff,#f6fafd)}.course-start-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.course-start-name{font:700 17px/1.2 "Vice City Bruner",Arial,sans-serif;color:#062441}.course-meta{display:flex;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:9px 0}.course-meta span{background:#edf4f8;border-radius:999px;padding:5px 8px}.course-capacity{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.course-capacity strong{font:700 25px/1 "Vice City Bruner",Arial,sans-serif;color:#005fba}.course-capacity small{display:block;color:var(--muted)}.status-pill{padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.status-critical{background:#fde5d7;color:#9a4d23}.status-last{background:#1261bd;color:#fff}.status-offer{background:#118a4a;color:#fff}.status-suspended{background:#c41118;color:#fff}.status-started{background:#e9dcf8;color:#75519d}.status-full{background:#684497;color:#fff}.status-default{background:#e8eef3;color:#405466}.course-guide-empty{grid-column:1/-1;padding:28px;text-align:center;color:var(--muted);background:#f6fafc;border-radius:10px}.course-update{font-size:12px;color:var(--muted)}
       .sales-form-shell { margin:-21px auto 30px; position:relative; }
       .sales-form-head { display:flex; justify-content:space-between; align-items:center; gap:12px; background:#fff; border:1px solid var(--line); padding:13px 15px; border-radius:8px 8px 0 0; box-shadow:var(--shadow); }
       .sales-form-head h2 { margin:0; font-size:20px; }
@@ -535,7 +536,7 @@
       .sale-feedback.success { color:#087b57; font-weight:850; }
       .sale-feedback.error { color:#b42318; font-weight:850; }
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
-      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column} }
+      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head{flex-direction:column} }
     </style>
   </head>
   <body>
@@ -574,7 +575,7 @@
     <main class="wrap hidden" id="app">
       <section class="toolbar">
         <label>Mes<select id="month"></select></label
-        ><button class="refresh" id="refresh">↻ Actualizar</button><button class="sale-button" id="openMySale">Cargar mi venta</button>
+        ><button class="refresh" id="refresh">↻ Actualizar</button><button class="refresh" id="openMyCourses">Próximos inicios</button><button class="sale-button" id="openMySale">Cargar mi venta</button>
         <div class="stamp" id="stamp"></div>
       </section>
       <section class="hero">
@@ -657,9 +658,10 @@
         </div>
         <div class="sales" id="salesList"></div>
       </section>
+      <section class="panel course-guide" id="myCourseGuide"><div class="course-guide-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><span class="course-update" id="myCoursesStamp">Cargando…</span></div><div class="course-guide-grid" id="myCoursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden" id="adminApp">
-      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
+      <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="openAdminCourses">Próximos inicios</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
       <section class="hero">
         <article class="personal"><div class="kicker">Objetivo mensual grupal</div><div class="hero-row"><div class="big"><span id="adminTeamSales">0</span> / <span id="adminTeamGoalView">—</span></div><button id="adminEditTeamGoal">Editar meta</button></div><div class="bar"><i id="adminTeamBar"></i></div><div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="adminTeamHorse">🐎</span><span class="race-finish">🏁</span></div><div class="under"><span id="adminTeamPercent">Meta del equipo</span><span id="adminTeamRemaining"></span></div></article>
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
@@ -672,6 +674,7 @@
         <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
         <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
       </section>
+      <section class="panel course-guide" id="adminCourseGuide"><div class="course-guide-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Estado general de la oferta disponible para ventas</div></div><span class="course-update" id="adminCoursesStamp">Cargando…</span></div><div class="course-guide-grid" id="adminCoursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
       <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
@@ -841,6 +844,27 @@
         clearTimeout(showNotice.timer);
         showNotice.timer = setTimeout(() => n.classList.remove("show"), 2600);
       }
+      function statusClass(status) {
+        const value = String(status || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return value.includes("critico") ? "status-critical" : value.includes("ultimo") ? "status-last" : value.includes("oferta") ? "status-offer" : value.includes("suspend") ? "status-suspended" : value.includes("iniciado") ? "status-started" : value.includes("completo") ? "status-full" : "status-default";
+      }
+      function renderUpcoming(target, data) {
+        const grid = $(target + "CoursesGrid"), stamp = $(target + "CoursesStamp");
+        stamp.textContent = "Actualizado " + data.updatedAt;
+        grid.innerHTML = data.courses.length ? data.courses.map((c) => `<article class="course-start-card"><div class="course-start-top"><div><div class="course-start-name">${esc(c.course)}</div><div class="course-meta"><span>${esc(c.site || "Sede sin informar")}</span><span>${esc(c.day || "Día a confirmar")} · ${esc(c.time || "Horario a confirmar")}</span><span>Inicio ${esc(c.startDate)}</span></div></div><span class="status-pill ${statusClass(c.status)}">${esc(c.status)}</span></div><div class="course-capacity"><div><small>Cupos disponibles</small><strong>${c.available}</strong></div><div><small>${c.enrolled} inscriptos de ${c.capacity || "—"}</small></div></div></article>`).join("") : '<div class="course-guide-empty">No hay próximos inicios cargados.</div>';
+      }
+      async function loadUpcoming(role, forceRefresh = false) {
+        const target = role === "admin" ? "admin" : "my";
+        const params = { action: "upcomingCourses", refresh: forceRefresh ? "1" : "0" };
+        if (role === "admin") params.adminToken = state.adminToken; else params.token = state.token;
+        try {
+          const data = await jsonp(params);
+          if (!data.ok) throw Error(data.error);
+          renderUpcoming(target, data);
+        } catch (error) {
+          $(target + "CoursesGrid").innerHTML = `<div class="course-guide-empty">${esc(error.message)}</div>`;
+        }
+      }
       async function login(e) {
         e.preventDefault();
         const b = e.submitter;
@@ -880,6 +904,7 @@
           state.data = d;
           state.month = d.month;
           render();
+          loadUpcoming("advisor", forceRefresh);
         } catch (x) {
           alert(x.message);
           if (/sesión/i.test(x.message)) logout();
@@ -1005,6 +1030,7 @@
       };
       $("logout").onclick = logout;
       $("refresh").onclick = () => load(true);
+      $("openMyCourses").onclick = () => $("myCourseGuide").scrollIntoView({ behavior: "smooth" });
       $("month").onchange = (e) => {
         state.month = e.target.value;
         load();
@@ -1143,8 +1169,10 @@
           return `<tr><td>${esc(a.advisor)}</td><td>${a.sales}</td><td class="money">${ars.format(c.rate)}</td><td class="money">${ars.format(c.base)}</td><td class="money bonus">${bonus ? "+" + ars.format(bonus) : ars.format(0)}</td><td class="money">${ars.format(total)}</td></tr>`;
         }).join("");
         $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
+        loadUpcoming("admin", forceRefresh);
       }
       $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
+      $("openAdminCourses").onclick = () => $("adminCourseGuide").scrollIntoView({ behavior: "smooth" });
       $("adminDashboardMonth").onchange = (e) => { state.month = e.target.value; loadAdmin().catch((x) => alert(x.message)); };
       $("adminEditTeamGoal").onclick = () => $("teamGoalDialog").showModal();
       $("adminEditWorkingDays").onclick = () => $("workingDaysDialog").showModal();
