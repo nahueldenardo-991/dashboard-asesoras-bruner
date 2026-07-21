@@ -658,7 +658,6 @@
         </div>
         <div class="sales" id="salesList"></div>
       </section>
-      <section class="panel course-guide" id="myCourseGuide"><div class="course-guide-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><span class="course-update" id="myCoursesStamp">Cargando…</span></div><div class="course-guide-grid" id="myCoursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden" id="adminApp">
       <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="openAdminCourses">Próximos inicios</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
@@ -674,7 +673,10 @@
         <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
         <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
       </section>
-      <section class="panel course-guide" id="adminCourseGuide"><div class="course-guide-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Estado general de la oferta disponible para ventas</div></div><span class="course-update" id="adminCoursesStamp">Cargando…</span></div><div class="course-guide-grid" id="adminCoursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
+    </main>
+    <main class="wrap hidden sales-form-shell" id="coursesPage">
+      <section class="sales-form-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><div class="sales-form-actions"><button class="refresh" id="refreshCourses">↻ Actualizar</button><button class="refresh" id="backFromCourses">← Volver a mi avance</button></div></section>
+      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Fechas, sedes, estados y disponibilidad de cada curso</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
       <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
@@ -848,22 +850,33 @@
         const value = String(status || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         return value.includes("critico") ? "status-critical" : value.includes("ultimo") ? "status-last" : value.includes("oferta") ? "status-offer" : value.includes("suspend") ? "status-suspended" : value.includes("iniciado") ? "status-started" : value.includes("completo") ? "status-full" : "status-default";
       }
-      function renderUpcoming(target, data) {
-        const grid = $(target + "CoursesGrid"), stamp = $(target + "CoursesStamp");
+      function renderUpcoming(data) {
+        const grid = $("coursesGrid"), stamp = $("coursesStamp");
         stamp.textContent = "Actualizado " + data.updatedAt;
         grid.innerHTML = data.courses.length ? data.courses.map((c) => `<article class="course-start-card"><div class="course-start-top"><div><div class="course-start-name">${esc(c.course)}</div><div class="course-meta"><span>${esc(c.site || "Sede sin informar")}</span><span>${esc(c.day || "Día a confirmar")} · ${esc(c.time || "Horario a confirmar")}</span><span>Inicio ${esc(c.startDate)}</span></div></div><span class="status-pill ${statusClass(c.status)}">${esc(c.status)}</span></div><div class="course-capacity"><div><small>Cupos disponibles</small><strong>${c.available}</strong></div><div><small>${c.enrolled} inscriptos de ${c.capacity || "—"}</small></div></div></article>`).join("") : '<div class="course-guide-empty">No hay próximos inicios cargados.</div>';
       }
       async function loadUpcoming(role, forceRefresh = false) {
-        const target = role === "admin" ? "admin" : "my";
         const params = { action: "upcomingCourses", refresh: forceRefresh ? "1" : "0" };
         if (role === "admin") params.adminToken = state.adminToken; else params.token = state.token;
         try {
           const data = await jsonp(params);
           if (!data.ok) throw Error(data.error);
-          renderUpcoming(target, data);
+          renderUpcoming(data);
         } catch (error) {
-          $(target + "CoursesGrid").innerHTML = `<div class="course-guide-empty">${esc(error.message)}</div>`;
+          $("coursesGrid").innerHTML = `<div class="course-guide-empty">${esc(error.message)}</div>`;
         }
+      }
+      let coursesReturnView = "app", coursesRole = "advisor";
+      function openCourses(role) {
+        coursesRole = role;
+        coursesReturnView = role === "admin" ? "adminApp" : "app";
+        $(coursesReturnView).classList.add("hidden");
+        $("coursesPage").classList.remove("hidden");
+        $("coursesGrid").innerHTML = '<div class="course-guide-empty">Consultando cursos…</div>';
+        $("coursesStamp").textContent = "Cargando…";
+        $("title").textContent = "Próximos inicios y cupos";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        loadUpcoming(coursesRole);
       }
       async function login(e) {
         e.preventDefault();
@@ -904,7 +917,6 @@
           state.data = d;
           state.month = d.month;
           render();
-          loadUpcoming("advisor", forceRefresh);
         } catch (x) {
           alert(x.message);
           if (/sesión/i.test(x.message)) logout();
@@ -1009,6 +1021,7 @@
         state.adminData = null;
         $("app").classList.add("hidden");
         $("adminApp").classList.add("hidden");
+        $("coursesPage").classList.add("hidden");
         $("logout").classList.add("hidden");
         $("login").classList.remove("hidden");
         $("title").textContent = "Objetivo mensual";
@@ -1030,7 +1043,7 @@
       };
       $("logout").onclick = logout;
       $("refresh").onclick = () => load(true);
-      $("openMyCourses").onclick = () => $("myCourseGuide").scrollIntoView({ behavior: "smooth" });
+      $("openMyCourses").onclick = () => openCourses("advisor");
       $("month").onchange = (e) => {
         state.month = e.target.value;
         load();
@@ -1169,10 +1182,16 @@
           return `<tr><td>${esc(a.advisor)}</td><td>${a.sales}</td><td class="money">${ars.format(c.rate)}</td><td class="money">${ars.format(c.base)}</td><td class="money bonus">${bonus ? "+" + ars.format(bonus) : ars.format(0)}</td><td class="money">${ars.format(total)}</td></tr>`;
         }).join("");
         $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
-        loadUpcoming("admin", forceRefresh);
       }
       $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
-      $("openAdminCourses").onclick = () => $("adminCourseGuide").scrollIntoView({ behavior: "smooth" });
+      $("openAdminCourses").onclick = () => openCourses("admin");
+      $("refreshCourses").onclick = () => loadUpcoming(coursesRole, true);
+      $("backFromCourses").onclick = () => {
+        $("coursesPage").classList.add("hidden");
+        $(coursesReturnView).classList.remove("hidden");
+        $("title").textContent = coursesReturnView === "app" && state.data ? "¡Vamos, " + state.data.advisor + "! ✨" : "Panel de Nahuel — Supervisor";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
       $("adminDashboardMonth").onchange = (e) => { state.month = e.target.value; loadAdmin().catch((x) => alert(x.message)); };
       $("adminEditTeamGoal").onclick = () => $("teamGoalDialog").showModal();
       $("adminEditWorkingDays").onclick = () => $("workingDaysDialog").showModal();
