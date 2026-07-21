@@ -490,7 +490,7 @@
       .primary, .refresh, .admin-link, .hero button { border-radius: 8px; }
       .goal-race { position:relative; height:68px; margin-top:14px; overflow:hidden; }
       .race-track { position:absolute; left:0; right:0; bottom:12px; height:5px; border-radius:99px; background:repeating-linear-gradient(90deg,#ffffffaa 0 18px,#ffffff35 18px 28px); }
-      .race-horse { position:absolute; left:0; bottom:18px; font-size:35px; line-height:1; transform:translateX(-3px); transition:left .8s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 4px 4px #0004); }
+      .race-horse { position:absolute; left:0; bottom:18px; font-size:35px; line-height:1; transform:translateX(-3px) scaleX(-1); transform-origin:center; transition:left .8s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 4px 4px #0004); }
       .race-finish { position:absolute; right:0; bottom:15px; font-size:35px; }
       .race-label { position:absolute; left:0; top:0; font-size:11px; font-weight:850; letter-spacing:.08em; text-transform:uppercase; opacity:.8; }
       .notice { position:fixed; left:50%; bottom:22px; transform:translate(-50%,20px); opacity:0; z-index:100; padding:12px 18px; border-radius:8px; background:#062441; color:white; box-shadow:var(--shadow); transition:.2s; pointer-events:none; }
