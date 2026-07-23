@@ -1041,7 +1041,7 @@
           ? d.sales
               .map(
                 (v) =>
-                  `<article class="sale"><div><div class="date">${esc(v.saleDate)}</div><div class="dni">Fecha de venta</div></div><div><div class="student">${esc(v.student)}</div><div class="dni">DNI ${esc(v.dni || "sin informar")}</div></div><div><div class="course">${esc(v.course)}</div><div class="course-start">Inicio: ${esc(v.startDate || "sin informar")}</div></div></article>`,
+                  `<article class="sale"><div><div class="date">${esc(v.saleDate)}</div><div class="dni">Fecha de venta</div></div><div><div class="student">${esc(v.student)}</div><div class="dni">DNI ${esc(v.dni || "sin informar")}</div></div><div><div class="course">${esc(v.course)}</div><div class="course-start">Sede: ${esc(v.site || "sin informar")} · Inicio: ${esc(v.startDate || "sin informar")}</div></div></article>`,
               )
               .join("")
           : '<div class="empty">Todavía no hay ventas cargadas para este mes.</div>';
@@ -1204,7 +1204,7 @@
           return `<article class="sale"><div><div class="student">#${i + 1} · ${esc(a.advisor)}</div><div class="dni">${g ? p + "% de su meta" : "Meta personal pendiente"}</div></div><div><div class="course">${a.sales} ventas</div><div class="course-start">Objetivo: ${g || "—"}</div></div><div class="bar"><i style="width:${Math.min(100, p)}%"></i></div></article>`;
         }).join("");
         $("adminSalesCount").textContent = d.sales.length + (d.sales.length === 1 ? " venta" : " ventas");
-        $("adminSalesList").innerHTML = d.sales.length ? d.sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas cargadas para este mes.</div>';
+        $("adminSalesList").innerHTML = d.sales.length ? d.sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Sede: ${esc(s.site || "—")} · Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas cargadas para este mes.</div>';
         const teamReached = goal > 0 && d.teamSales >= goal;
         let commissionsTotal = 0;
         $("adminCommissionStatus").textContent = teamReached ? "Premio grupal +10%" : "Sin premio grupal";
