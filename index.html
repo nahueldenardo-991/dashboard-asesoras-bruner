@@ -315,6 +315,19 @@
         align-items: center;
         margin-bottom: 14px;
       }
+      .admin-sales-tools {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 14px;
+        padding: 13px;
+        border-radius: 9px;
+        background: #eef6fb;
+      }
+      .admin-sales-tools label { flex: 1; max-width: 330px; margin: 0; }
+      .admin-sales-tools select { background: #fff; }
+      .print-sales-heading { display: none; }
       .count {
         background: #f0eaf4;
         color: var(--violet);
@@ -438,6 +451,8 @@
         .big {
           font-size: 34px;
         }
+        .admin-sales-tools { align-items: stretch; flex-direction: column; }
+        .admin-sales-tools label { max-width: none; }
       }
       @media (max-width: 400px) {
         .wrap {
@@ -537,6 +552,21 @@
       .sale-feedback.error { color:#b42318; font-weight:850; }
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
+      @media print {
+        @page { size: A4; margin: 13mm; }
+        body { background: #fff !important; color: #152432; }
+        body::before { display: none !important; }
+        body * { visibility: hidden !important; }
+        #adminSalesPanel, #adminSalesPanel * { visibility: visible !important; }
+        #adminSalesPanel { position: absolute; inset: 0 auto auto 0; width: 100%; margin: 0; padding: 0; border: 0; box-shadow: none; }
+        #adminSalesPanel .no-print { display: none !important; }
+        #adminSalesPanel .print-sales-heading { display: block; margin: 0 0 16px; padding: 0 0 12px; border-bottom: 3px solid #6519ff; }
+        #adminSalesPanel .print-sales-heading h1 { margin: 0; font-size: 24px; }
+        #adminSalesPanel .print-sales-heading p { margin: 5px 0 0; color: #5c6d7a; }
+        #adminSalesPanel .panel-head { margin-bottom: 10px; }
+        #adminSalesPanel .sale { grid-template-columns: 95px 1.2fr 1fr; padding: 9px 10px; border-radius: 7px; break-inside: avoid; page-break-inside: avoid; }
+        #adminSalesPanel .sales { gap: 6px; }
+      }
     </style>
   </head>
   <body>
@@ -666,7 +696,12 @@
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
       </section>
       <section class="panel"><div class="panel-head"><div><h2>Ranking mensual</h2><div class="muted">Ventas reales y objetivo personal declarado</div></div></div><div class="sales" id="adminRanking"></div></section>
-      <section class="panel"><div class="panel-head"><div><h2>Detalle de ventas del equipo</h2><div class="muted">Cada inscripción y la persona responsable de la venta</div></div><span class="count" id="adminSalesCount">0 ventas</span></div><div class="sales" id="adminSalesList"></div></section>
+      <section class="panel" id="adminSalesPanel">
+        <div class="print-sales-heading"><h1>Instituto Bruner · Detalle de ventas</h1><p id="adminPrintSalesSubtitle"></p></div>
+        <div class="panel-head"><div><h2>Detalle de ventas del equipo</h2><div class="muted">Cada inscripción y la persona responsable de la venta</div></div><span class="count" id="adminSalesCount">0 ventas</span></div>
+        <div class="admin-sales-tools no-print"><label>Filtrar por asesora<select id="adminSalesAdvisor"><option value="">Todas las asesoras</option></select></label><button class="refresh" id="adminPrintSales" type="button">Imprimir / Guardar PDF</button></div>
+        <div class="sales" id="adminSalesList"></div>
+      </section>
       <section class="panel">
         <div class="panel-head"><div><h2>Cuadro de comisiones</h2><div class="muted">Estimación mensual según el esquema vigente</div></div><span class="count" id="adminCommissionStatus">Sin premio grupal</span></div>
         <div class="commission-table-wrap"><table class="commission-table"><thead><tr><th>Asesora</th><th>Ventas</th><th>Valor por venta</th><th>Comisión base</th><th>Premio 10%</th><th>Total estimado</th></tr></thead><tbody id="adminCommissionRows"></tbody></table></div>
@@ -1203,8 +1238,11 @@
           const g = a.goal || 0, p = g ? Math.round(a.sales / g * 100) : 0;
           return `<article class="sale"><div><div class="student">#${i + 1} · ${esc(a.advisor)}</div><div class="dni">${g ? p + "% de su meta" : "Meta personal pendiente"}</div></div><div><div class="course">${a.sales} ventas</div><div class="course-start">Objetivo: ${g || "—"}</div></div><div class="bar"><i style="width:${Math.min(100, p)}%"></i></div></article>`;
         }).join("");
-        $("adminSalesCount").textContent = d.sales.length + (d.sales.length === 1 ? " venta" : " ventas");
-        $("adminSalesList").innerHTML = d.sales.length ? d.sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Sede: ${esc(s.site || "—")} · Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas cargadas para este mes.</div>';
+        const previousSalesAdvisor = $("adminSalesAdvisor").value;
+        const salesAdvisors = [...new Set(d.sales.map((sale) => sale.advisor || "Sin asignar"))].sort((a, b) => a.localeCompare(b, "es"));
+        $("adminSalesAdvisor").innerHTML = '<option value="">Todas las asesoras</option>' + salesAdvisors.map((advisor) => `<option value="${esc(advisor)}">${esc(advisor)}</option>`).join("");
+        $("adminSalesAdvisor").value = salesAdvisors.includes(previousSalesAdvisor) ? previousSalesAdvisor : "";
+        renderAdminSales();
         const teamReached = goal > 0 && d.teamSales >= goal;
         let commissionsTotal = 0;
         $("adminCommissionStatus").textContent = teamReached ? "Premio grupal +10%" : "Sin premio grupal";
@@ -1215,7 +1253,27 @@
         }).join("");
         $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
       }
+      function renderAdminSales() {
+        const data = state.adminData || { sales: [], month: "" },
+          selectedAdvisor = $("adminSalesAdvisor").value,
+          sales = data.sales.filter((sale) => !selectedAdvisor || (sale.advisor || "Sin asignar") === selectedAdvisor),
+          monthLabel = $("adminDashboardMonth").selectedOptions[0]?.textContent || data.month || "";
+        $("adminSalesCount").textContent = sales.length + (sales.length === 1 ? " venta" : " ventas");
+        $("adminPrintSalesSubtitle").textContent = `${selectedAdvisor || "Todo el equipo"} · ${monthLabel} · ${sales.length} ${sales.length === 1 ? "venta" : "ventas"}`;
+        $("adminSalesList").innerHTML = sales.length ? sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Sede: ${esc(s.site || "—")} · Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas para la asesora y el mes seleccionados.</div>';
+      }
       $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
+      $("adminSalesAdvisor").onchange = renderAdminSales;
+      $("adminPrintSales").onclick = () => {
+        if (!state.adminData) return;
+        const visibleSales = state.adminData.sales.filter((sale) => !$("adminSalesAdvisor").value || (sale.advisor || "Sin asignar") === $("adminSalesAdvisor").value);
+        if (!visibleSales.length) return alert("No hay ventas para imprimir.");
+        const advisor = $("adminSalesAdvisor").value || "Equipo",
+          previousTitle = document.title;
+        document.title = `Ventas Bruner - ${advisor} - ${state.month}`;
+        window.print();
+        setTimeout(() => { document.title = previousTitle; }, 1200);
+      };
       $("openAdminCourses").onclick = () => openCourses("admin");
       $("refreshCourses").onclick = () => loadUpcoming(coursesRole, true);
       $("coursesStartMonth").onchange = renderUpcomingList;
