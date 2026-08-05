@@ -553,10 +553,26 @@
       .sale-feedback.error { color:#b42318; font-weight:850; }
       .sale-progress { width:min(440px,100%); margin-top:12px; }
       .sale-progress[hidden] { display:none; }
+      .sale-progress-content { display:flex; align-items:center; gap:12px; }
+      .sale-progress-copy { flex:1; min-width:0; }
       .sale-progress-track { height:10px; overflow:hidden; border-radius:999px; background:#e9eef3; }
       .sale-progress-bar { width:38%; height:100%; border-radius:inherit; background:linear-gradient(90deg,#005fba,#6519ff); animation:sale-loading 1.05s ease-in-out infinite; }
       .sale-progress-text { display:block; margin-top:7px; color:#405466; font-size:12px; font-weight:800; }
       @keyframes sale-loading { from{transform:translateX(-110%)} to{transform:translateX(265%)} }
+      .bruner-mascot { display:block; width:86px; height:86px; object-fit:contain; transform-origin:50% 85%; }
+      .bruner-mascot.dancing { animation:mascot-dance .72s ease-in-out infinite alternate; }
+      .bruner-mascot.running { animation:mascot-run .62s ease-in-out infinite; }
+      .course-loader { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-height:150px; font-weight:800; }
+      .course-loader .bruner-mascot { width:104px; height:104px; }
+      .loading-overlay { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; padding:20px; background:rgba(6,36,65,.36); backdrop-filter:blur(3px); }
+      .loading-overlay[hidden] { display:none; }
+      .loading-card { width:min(330px,90vw); padding:20px; text-align:center; border:1px solid #d9e4ed; border-radius:16px; background:#fff; box-shadow:0 24px 65px rgba(6,36,65,.25); }
+      .loading-card .bruner-mascot { width:126px; height:126px; margin:0 auto 5px; }
+      .loading-card strong { display:block; color:#062441; font:700 18px/1.2 "Vice City Bruner",Arial,sans-serif; }
+      .loading-card span { display:block; margin-top:6px; color:var(--muted); font-size:13px; }
+      @keyframes mascot-dance { 0%{transform:translateY(2px) rotate(-7deg) scale(.97)} 55%{transform:translateY(-7px) rotate(5deg) scale(1.03)} 100%{transform:translateY(0) rotate(8deg) scale(1)} }
+      @keyframes mascot-run { 0%,100%{transform:translate(-7px,2px) rotate(-2deg)} 50%{transform:translate(7px,-7px) rotate(2deg)} }
+      @media(prefers-reduced-motion:reduce){.bruner-mascot.dancing,.bruner-mascot.running,.sale-progress-bar{animation-duration:2.4s}}
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
       @media print {
@@ -718,7 +734,7 @@
     </main>
     <main class="wrap hidden sales-form-shell" id="coursesPage">
       <section class="sales-form-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><div class="sales-form-actions"><button class="refresh" id="refreshCourses">↻ Actualizar</button><button class="refresh" id="backFromCourses">← Volver a mi avance</button></div></section>
-      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty">Consultando cursos…</div></div></section>
+      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" />Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
       <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
@@ -738,7 +754,7 @@
           <label class="wide">Comprobante/s<input id="saleFiles" type="file" accept="image/*,application/pdf" multiple required /><span class="file-note">Podés adjuntar fotos o PDF. Máximo 10 archivos y 15 MB en total.</span></label>
         </div>
         <div class="sale-submit-row"><button class="sale-button" id="submitSale">Guardar venta</button><span class="sale-feedback" id="saleFeedback"></span></div>
-        <div class="sale-progress" id="saleProgress" hidden role="status" aria-live="polite"><div class="sale-progress-track"><div class="sale-progress-bar"></div></div><span class="sale-progress-text">Guardando la venta y subiendo los comprobantes…</span></div>
+        <div class="sale-progress" id="saleProgress" hidden role="status" aria-live="polite"><div class="sale-progress-content"><img class="bruner-mascot dancing" src="./assets/bruner-mascot-dance.png" alt="" /><div class="sale-progress-copy"><div class="sale-progress-track"><div class="sale-progress-bar"></div></div><span class="sale-progress-text">Guardando la venta y subiendo los comprobantes…</span></div></div></div>
       </form>
     </main>
     <dialog id="goalDialog">
@@ -775,6 +791,7 @@
     </dialog>
     <dialog id="teamGoalDialog"><form class="modal" id="teamGoalForm"><h2>Objetivo grupal</h2><div class="muted">Define la meta total del equipo para el mes seleccionado.</div><label>Objetivo total<input id="adminGoal" type="number" min="0" max="9999" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
     <dialog id="workingDaysDialog"><form class="modal" id="workingDaysForm"><h2>Días hábiles de venta</h2><div class="muted">Lunes a sábado, sin domingos ni feriados nacionales. Podés reemplazar el total para este mes.</div><label>Cantidad de días hábiles<input id="workingDaysInput" type="number" min="1" max="31" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
+    <div class="loading-overlay" id="globalLoading" hidden role="status" aria-live="polite"><div class="loading-card"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" /><strong id="globalLoadingTitle">Actualizando tus datos…</strong><span>Un momento, ya casi está.</span></div></div>
     <div class="notice" id="notice"></div>
     <footer>Datos actualizados desde las planillas de Instituto Bruner</footer>
     <script>
@@ -794,6 +811,19 @@
                 "'": "&#39;",
               })[c],
           );
+      let loadingRequests = 0;
+      function loadingTitle(action) {
+        return ({ listAdvisors:"Preparando el ingreso…", login:"Ingresando a tu panel…", myDashboard:"Actualizando tu avance…", adminLogin:"Ingresando a supervisión…", adminDashboard:"Actualizando el equipo…", setGoal:"Guardando tu objetivo…", setTeamGoal:"Guardando la meta grupal…", setWorkingDays:"Guardando los días hábiles…" })[action] || "Actualizando tus datos…";
+      }
+      function beginLoading(action) {
+        loadingRequests++;
+        $("globalLoadingTitle").textContent = loadingTitle(action);
+        $("globalLoading").hidden = false;
+      }
+      function endLoading() {
+        loadingRequests = Math.max(0, loadingRequests - 1);
+        if (!loadingRequests) $("globalLoading").hidden = true;
+      }
       async function jsonpOnce(params) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 20000);
@@ -813,17 +843,23 @@
         }
       }
       async function jsonp(params) {
+        const showMascot = params.action !== "upcomingCourses";
+        if (showMascot) beginLoading(params.action);
         let lastError;
-        for (let attempt = 0; attempt < 3; attempt++) {
-          try {
-            return await jsonpOnce(params);
-          } catch (error) {
-            lastError = error;
-            if (attempt < 2)
-              await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+        try {
+          for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+              return await jsonpOnce(params);
+            } catch (error) {
+              lastError = error;
+              if (attempt < 2)
+                await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+            }
           }
+          throw lastError || Error("No se pudo conectar con Drive.");
+        } finally {
+          if (showMascot) endLoading();
         }
-        throw lastError || Error("No se pudo conectar con Drive.");
       }
       const OFFICIAL_HOLIDAYS = new Set([
         "2026-01-01","2026-02-16","2026-02-17","2026-03-23","2026-03-24","2026-04-02","2026-04-03","2026-05-01","2026-05-25","2026-06-15","2026-06-20","2026-07-09","2026-07-10","2026-08-17","2026-10-12","2026-11-23","2026-12-07","2026-12-08","2026-12-25"
@@ -950,7 +986,7 @@
         coursesReturnView = role === "admin" ? "adminApp" : "app";
         $(coursesReturnView).classList.add("hidden");
         $("coursesPage").classList.remove("hidden");
-        $("coursesGrid").innerHTML = '<div class="course-guide-empty">Consultando cursos…</div>';
+        $("coursesGrid").innerHTML = '<div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" />Consultando cursos…</div>';
         $("coursesStamp").textContent = "Cargando…";
         $("title").textContent = "Próximos inicios y cupos";
         window.scrollTo({ top: 0, behavior: "smooth" });
