@@ -535,6 +535,12 @@
       .sale-button { border:0; border-radius:8px; padding:11px 15px; background:linear-gradient(135deg,#005fba,#6519ff); color:#fff; font-weight:850; cursor:pointer; white-space:nowrap; }
       .course-guide{scroll-margin-top:18px}.course-guide-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.course-filters{display:flex;align-items:end;gap:12px;margin-top:16px;padding:14px;background:#eef6fb;border-radius:9px}.course-filters label{min-width:240px}.course-visible-count{color:#405466;font-weight:800;padding-bottom:11px}.course-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.course-month-heading{grid-column:1/-1;margin:10px 0 0;padding:10px 13px;border-left:5px solid #6519ff;border-radius:7px;background:#eef0ff;color:#172052;font:800 18px/1.2 "Vice City Bruner",Arial,sans-serif}.course-start-card{border:1px solid var(--line);border-radius:10px;padding:15px;background:linear-gradient(145deg,#fff,#f6fafd)}.course-start-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.course-start-name{font:700 17px/1.2 "Vice City Bruner",Arial,sans-serif;color:#062441}.course-meta{display:flex;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:9px 0}.course-meta span{background:#edf4f8;border-radius:999px;padding:5px 8px}.course-code-box{display:flex;align-items:center;gap:9px;margin-top:11px;padding:9px 10px;border:1px dashed #8bb8d7;border-radius:8px;background:#f2f8fc}.course-code-box code{flex:1;min-width:0;overflow-wrap:anywhere;color:#062441;font:700 12px/1.35 monospace}.copy-course-code{border:0;border-radius:7px;padding:8px 10px;background:#005fba;color:#fff;font-weight:850;cursor:pointer;white-space:nowrap}.course-link-row{margin-top:9px}.copy-whatsapp-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:8px;padding:10px 12px;background:#128c55;color:#fff;font-weight:900;cursor:pointer}.whatsapp-mark{display:grid;place-items:center;width:23px;height:23px;border:2px solid #fff;border-radius:50%;font:900 13px/1 Arial}.course-commercial{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}.course-commercial>div{padding:10px 12px;border-radius:8px;background:#f0ecff}.course-commercial small{display:block;color:#655a78;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}.course-commercial strong{display:block;margin-top:3px;color:#32107b;font:700 17px/1.2 "Vice City Bruner",Arial,sans-serif}.course-capacity{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.course-capacity strong{font:700 25px/1 "Vice City Bruner",Arial,sans-serif;color:#005fba}.course-capacity small{display:block;color:var(--muted)}.status-pill{padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.status-critical{background:#fde5d7;color:#9a4d23}.status-last{background:#1261bd;color:#fff}.status-offer{background:#118a4a;color:#fff}.status-suspended{background:#c41118;color:#fff}.status-started{background:#e9dcf8;color:#75519d}.status-full{background:#684497;color:#fff}.status-default{background:#e8eef3;color:#405466}.course-guide-empty{grid-column:1/-1;padding:28px;text-align:center;color:var(--muted);background:#f6fafc;border-radius:10px}.course-update{font-size:12px;color:var(--muted)}
       .sales-form-shell { margin:-21px auto 30px; position:relative; }
+      .course-filters { display:grid; grid-template-columns:minmax(240px,1.35fr) repeat(2,minmax(180px,1fr)) auto; align-items:end; }
+      .course-filters label { min-width:0; margin-top:0; }
+      .course-search-wrap { position:relative; }
+      .course-search-wrap input { padding-left:39px; }
+      .course-search-icon { position:absolute; left:13px; bottom:13px; color:#6519ff; font-size:17px; line-height:1; pointer-events:none; }
+      .course-visible-count { white-space:nowrap; }
       .sales-form-head { display:flex; justify-content:space-between; align-items:center; gap:12px; background:#fff; border:1px solid var(--line); padding:13px 15px; border-radius:8px 8px 0 0; box-shadow:var(--shadow); }
       .sales-form-head h2 { margin:0; font-size:20px; }
       .sales-form-actions { display:flex; gap:8px; flex-wrap:wrap; }
@@ -575,6 +581,7 @@
       @media(prefers-reduced-motion:reduce){.bruner-mascot.dancing,.bruner-mascot.running,.sale-progress-bar{animation-duration:2.4s}}
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
+      @media(max-width:700px){ .course-filters{grid-template-columns:1fr}.course-visible-count{white-space:normal} }
       @media print {
         @page { size: A4; margin: 13mm; }
         body { background: #fff !important; color: #152432; }
@@ -734,7 +741,7 @@
     </main>
     <main class="wrap hidden sales-form-shell" id="coursesPage">
       <section class="sales-form-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><div class="sales-form-actions"><button class="refresh" id="refreshCourses">↻ Actualizar</button><button class="refresh" id="backFromCourses">← Volver a mi avance</button></div></section>
-      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png?v=bb7f31b" alt="" />Consultando cursos…</div></div></section>
+      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label class="course-search-wrap">Buscar curso<span class="course-search-icon" aria-hidden="true">⌕</span><input id="coursesSearch" type="search" placeholder="Ej.: cerrajería" autocomplete="off" /></label><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png?v=bb7f31b" alt="" />Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
       <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
@@ -958,7 +965,12 @@
       }
       function renderUpcomingList() {
         const selectedMonth = $("coursesStartMonth").value, selectedSite = $("coursesSite").value;
-        const visible = upcomingCourses.filter((c) => (!selectedMonth || courseMonthKey(c.startDate) === selectedMonth) && (!selectedSite || (c.site || "Sede sin informar") === selectedSite));
+        const normalizeSearch = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        const search = normalizeSearch($("coursesSearch").value);
+        const visible = upcomingCourses.filter((c) => {
+          const matchesText = !search || normalizeSearch([c.course, c.code].join(" ")).includes(search);
+          return matchesText && (!selectedMonth || courseMonthKey(c.startDate) === selectedMonth) && (!selectedSite || (c.site || "Sede sin informar") === selectedSite);
+        });
         $("coursesVisibleCount").textContent = visible.length + (visible.length === 1 ? " curso" : " cursos") + " · por fecha de inicio";
         let lastMonth = "";
         $("coursesGrid").innerHTML = visible.length ? visible.map((c) => {
@@ -1348,6 +1360,7 @@
       };
       $("openAdminCourses").onclick = () => openCourses("admin");
       $("refreshCourses").onclick = () => loadUpcoming(coursesRole, true);
+      $("coursesSearch").oninput = renderUpcomingList;
       $("coursesStartMonth").onchange = renderUpcomingList;
       $("coursesSite").onchange = renderUpcomingList;
       $("coursesGrid").onclick = async (event) => {
