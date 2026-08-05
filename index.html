@@ -547,9 +547,16 @@
       .file-note { margin-top:6px; color:var(--muted); font-size:12px; }
       .sale-submit-row { display:flex; align-items:center; gap:14px; margin-top:20px; flex-wrap:wrap; }
       .sale-submit-row .sale-button { min-width:190px; min-height:48px; }
+      .sale-button:disabled { cursor:wait; opacity:.72; }
       .sale-feedback { font-size:13px; color:var(--muted); }
       .sale-feedback.success { color:#087b57; font-weight:850; }
       .sale-feedback.error { color:#b42318; font-weight:850; }
+      .sale-progress { width:min(440px,100%); margin-top:12px; }
+      .sale-progress[hidden] { display:none; }
+      .sale-progress-track { height:10px; overflow:hidden; border-radius:999px; background:#e9eef3; }
+      .sale-progress-bar { width:38%; height:100%; border-radius:inherit; background:linear-gradient(90deg,#005fba,#6519ff); animation:sale-loading 1.05s ease-in-out infinite; }
+      .sale-progress-text { display:block; margin-top:7px; color:#405466; font-size:12px; font-weight:800; }
+      @keyframes sale-loading { from{transform:translateX(-110%)} to{transform:translateX(265%)} }
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
       @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
       @media print {
@@ -722,6 +729,7 @@
           <label>Apellido completo<input id="saleLastName" required autocomplete="family-name" /></label>
           <label>Nombre completo<input id="saleFirstName" required autocomplete="given-name" /></label>
           <label>DNI<input id="saleDni" required inputmode="numeric" /></label>
+          <label>Teléfono personal<input id="salePhone" required inputmode="tel" autocomplete="tel" placeholder="Ej.: 351 555 1234" /></label>
           <label>Código de curso<input id="saleCourse" required placeholder="Copiar y pegar" /></label>
           <label>Monto abonado total<input id="saleAmount" type="number" min="0" step="0.01" required inputmode="decimal" /></label>
           <label>Descripción de pago<select id="saleDescription" required><option value="">Elegí una opción</option><option>Inscripción</option><option>Inscripción + cuota</option><option>Cuota</option><option>Pago parcial / Adelanto</option><option>Curso completo</option><option>Beca - Aprender un oficio, impulsar tu futuro</option></select></label>
@@ -730,6 +738,7 @@
           <label class="wide">Comprobante/s<input id="saleFiles" type="file" accept="image/*,application/pdf" multiple required /><span class="file-note">Podés adjuntar fotos o PDF. Máximo 10 archivos y 15 MB en total.</span></label>
         </div>
         <div class="sale-submit-row"><button class="sale-button" id="submitSale">Guardar venta</button><span class="sale-feedback" id="saleFeedback"></span></div>
+        <div class="sale-progress" id="saleProgress" hidden role="status" aria-live="polite"><div class="sale-progress-track"><div class="sale-progress-bar"></div></div><span class="sale-progress-text">Guardando la venta y subiendo los comprobantes…</span></div>
       </form>
     </main>
     <dialog id="goalDialog">
@@ -1078,7 +1087,7 @@
           ? d.sales
               .map(
                 (v) =>
-                  `<article class="sale"><div><div class="date">${esc(v.saleDate)}</div><div class="dni">Fecha de venta</div></div><div><div class="student">${esc(v.student)}</div><div class="dni">DNI ${esc(v.dni || "sin informar")}</div></div><div><div class="course">${esc(v.course)}</div><div class="course-start">Sede: ${esc(v.site || "sin informar")} · Inicio: ${esc(v.startDate || "sin informar")}</div></div></article>`,
+                  `<article class="sale"><div><div class="date">${esc(v.saleDate)}</div><div class="dni">Fecha de venta</div></div><div><div class="student">${esc(v.student)}</div><div class="dni">DNI ${esc(v.dni || "sin informar")} · Tel. ${esc(v.phone || "sin informar")}</div></div><div><div class="course">${esc(v.course)}</div><div class="course-start">Sede: ${esc(v.site || "sin informar")} · Inicio: ${esc(v.startDate || "sin informar")}</div></div></article>`,
               )
               .join("")
           : '<div class="empty">Todavía no hay ventas cargadas para este mes.</div>';
@@ -1125,6 +1134,8 @@
         e.preventDefault();
         const button = e.submitter, feedback = $("saleFeedback");
         button.disabled = true;
+        button.textContent = "Guardando…";
+        $("saleProgress").hidden = false;
         feedback.className = "sale-feedback";
         feedback.textContent = "Guardando la venta y los comprobantes…";
         try {
@@ -1138,6 +1149,7 @@
             lastName: $("saleLastName").value.trim(),
             firstName: $("saleFirstName").value.trim(),
             dni: $("saleDni").value.trim(),
+            phone: $("salePhone").value.trim(),
             courseCode: $("saleCourse").value.trim(),
             amount: $("saleAmount").value,
             paymentDescription: $("saleDescription").value,
@@ -1158,6 +1170,8 @@
           feedback.textContent = x.message;
         } finally {
           button.disabled = false;
+          button.textContent = "Guardar venta";
+          $("saleProgress").hidden = true;
         }
       };
       $("backFromSale").onclick = () => {
@@ -1262,7 +1276,7 @@
           monthLabel = $("adminDashboardMonth").selectedOptions[0]?.textContent || data.month || "";
         $("adminSalesCount").textContent = sales.length + (sales.length === 1 ? " venta" : " ventas");
         $("adminPrintSalesSubtitle").textContent = `${selectedAdvisor || "Todo el equipo"} · ${monthLabel} · ${sales.length} ${sales.length === 1 ? "venta" : "ventas"}`;
-        $("adminSalesList").innerHTML = sales.length ? sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Sede: ${esc(s.site || "—")} · Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas para la asesora y el mes seleccionados.</div>';
+        $("adminSalesList").innerHTML = sales.length ? sales.map((s) => `<article class="sale"><div><div class="date">${esc(s.saleDate)}</div><div class="dni">Asesor/a: ${esc(s.advisor || "Sin asignar")}</div></div><div><div class="student">${esc(s.student || "Sin nombre")}</div><div class="dni">DNI ${esc(s.dni || "—")} · Tel. ${esc(s.phone || "—")}</div></div><div><div class="course">${esc(s.course || "Curso sin identificar")}</div><div class="course-start">Sede: ${esc(s.site || "—")} · Inicio: ${esc(s.startDate || "—")}</div></div></article>`).join("") : '<div class="empty">No hay ventas para la asesora y el mes seleccionados.</div>';
       }
       $("adminRefresh").onclick = () => loadAdmin(true).catch((x) => alert(x.message));
       $("adminSalesAdvisor").onchange = renderAdminSales;
