@@ -969,6 +969,25 @@
           const whatsappButton = c.whatsappLink ? `<div class="course-link-row"><button class="copy-whatsapp-link" type="button" data-whatsapp="${encodeURIComponent(c.whatsappLink)}"><span class="whatsapp-mark" aria-hidden="true">☎</span>Copiar link del grupo</button></div>` : "";
           return heading + `<article class="course-start-card"><div class="course-start-top"><div><div class="course-start-name">${esc(c.course)}</div><div class="course-meta"><span>${esc(c.site || "Sede sin informar")}</span><span>${esc(c.day || "Día a confirmar")} · ${esc(c.time || "Horario a confirmar")}</span><span>Inicio ${esc(c.startDate)}</span></div></div><span class="status-pill ${statusClass(c.status)}">${esc(c.status)}</span></div><div class="course-code-box"><code>${esc(c.code)}</code><button class="copy-course-code" type="button" data-code="${encodeURIComponent(c.code)}">Copiar código</button></div>${whatsappButton}<div class="course-commercial"><div><small>Duración</small><strong>${esc(c.duration || "A confirmar")}</strong></div><div><small>${priceTitle}</small><strong>${priceValue}</strong></div></div><div class="course-capacity"><div><small>Cupos disponibles</small><strong>${c.available}</strong></div><div><small>${c.enrolled} inscriptos de ${c.capacity || "—"}</small></div></div></article>`;
         }).join("") : '<div class="course-guide-empty">No hay cursos disponibles para estos filtros.</div>';
+        $("coursesGrid").querySelectorAll(".copy-course-code, .copy-whatsapp-link").forEach((button) => {
+          button.onclick = () => copyCourseValue(button);
+        });
+      }
+      async function copyCourseValue(button) {
+        const isWhatsapp = button.classList.contains("copy-whatsapp-link");
+        const value = decodeURIComponent(isWhatsapp ? button.dataset.whatsapp || "" : button.dataset.code || "");
+        if (!value) return;
+        try {
+          await navigator.clipboard.writeText(value);
+        } catch {
+          const input = document.createElement("textarea");
+          input.value = value;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand("copy");
+          input.remove();
+        }
+        showNotice(isWhatsapp ? "Link del grupo copiado ✓" : "Código copiado ✓");
       }
       async function loadUpcoming(role, forceRefresh = false) {
         const params = { action: "upcomingCourses", refresh: forceRefresh ? "1" : "0" };
@@ -1333,15 +1352,8 @@
       $("coursesSite").onchange = renderUpcomingList;
       $("coursesGrid").onclick = async (event) => {
         const button = event.target.closest(".copy-course-code, .copy-whatsapp-link");
-        if (!button) return;
-        const isWhatsapp = button.classList.contains("copy-whatsapp-link"), value = decodeURIComponent(isWhatsapp ? button.dataset.whatsapp || "" : button.dataset.code || "");
-        try {
-          await navigator.clipboard.writeText(value);
-        } catch {
-          const input = document.createElement("textarea");
-          input.value = value; document.body.appendChild(input); input.select(); document.execCommand("copy"); input.remove();
-        }
-        showNotice(isWhatsapp ? "Link del grupo copiado ✓" : "Código copiado ✓");
+        if (!button || button.onclick) return;
+        await copyCourseValue(button);
       };
       $("backFromCourses").onclick = () => {
         $("coursesPage").classList.add("hidden");
