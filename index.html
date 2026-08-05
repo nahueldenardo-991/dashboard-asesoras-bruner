@@ -734,7 +734,7 @@
     </main>
     <main class="wrap hidden sales-form-shell" id="coursesPage">
       <section class="sales-form-head"><div><h2>Próximos inicios y cupos</h2><div class="muted">Guía comercial actualizada desde Cursos Disponibles</div></div><div class="sales-form-actions"><button class="refresh" id="refreshCourses">↻ Actualizar</button><button class="refresh" id="backFromCourses">← Volver a mi avance</button></div></section>
-      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" />Consultando cursos…</div></div></section>
+      <section class="panel course-guide"><div class="course-guide-head"><div><h2>Oferta disponible para ventas</h2><div class="muted">Ordenada desde el inicio más próximo</div></div><span class="course-update" id="coursesStamp">Cargando…</span></div><div class="course-filters"><label>Mes de inicio<select id="coursesStartMonth"><option value="">Todos los meses</option></select></label><label>Sede<select id="coursesSite"><option value="">Todas las sedes</option></select></label><div class="course-visible-count" id="coursesVisibleCount"></div></div><div class="course-guide-grid" id="coursesGrid"><div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png?v=bb7f31b" alt="" />Consultando cursos…</div></div></section>
     </main>
     <main class="wrap hidden sales-form-shell" id="salesFormPage">
       <section class="sales-form-head"><div><h2 id="salesFormTitle">Cargar venta</h2><div class="muted">La inscripción se guarda directamente en la planilla oficial de Bruner.</div></div><div class="sales-form-actions"><button class="refresh" id="backFromSale">← Volver a mi avance</button></div></section>
@@ -754,7 +754,7 @@
           <label class="wide">Comprobante/s<input id="saleFiles" type="file" accept="image/*,application/pdf" multiple required /><span class="file-note">Podés adjuntar fotos o PDF. Máximo 10 archivos y 15 MB en total.</span></label>
         </div>
         <div class="sale-submit-row"><button class="sale-button" id="submitSale">Guardar venta</button><span class="sale-feedback" id="saleFeedback"></span></div>
-        <div class="sale-progress" id="saleProgress" hidden role="status" aria-live="polite"><div class="sale-progress-content"><img class="bruner-mascot dancing" src="./assets/bruner-mascot-dance.png" alt="" /><div class="sale-progress-copy"><div class="sale-progress-track"><div class="sale-progress-bar"></div></div><span class="sale-progress-text">Guardando la venta y subiendo los comprobantes…</span></div></div></div>
+        <div class="sale-progress" id="saleProgress" hidden role="status" aria-live="polite"><div class="sale-progress-content"><img class="bruner-mascot dancing" src="./assets/bruner-mascot-dance.png?v=bb7f31b" alt="" /><div class="sale-progress-copy"><div class="sale-progress-track"><div class="sale-progress-bar"></div></div><span class="sale-progress-text">Guardando la venta y subiendo los comprobantes…</span></div></div></div>
       </form>
     </main>
     <dialog id="goalDialog">
@@ -791,7 +791,7 @@
     </dialog>
     <dialog id="teamGoalDialog"><form class="modal" id="teamGoalForm"><h2>Objetivo grupal</h2><div class="muted">Define la meta total del equipo para el mes seleccionado.</div><label>Objetivo total<input id="adminGoal" type="number" min="0" max="9999" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
     <dialog id="workingDaysDialog"><form class="modal" id="workingDaysForm"><h2>Días hábiles de venta</h2><div class="muted">Lunes a sábado, sin domingos ni feriados nacionales. Podés reemplazar el total para este mes.</div><label>Cantidad de días hábiles<input id="workingDaysInput" type="number" min="1" max="31" required /></label><div class="actions"><button type="button" class="btn secondary" data-close>Cancelar</button><button class="btn save">Guardar</button></div></form></dialog>
-    <div class="loading-overlay" id="globalLoading" hidden role="status" aria-live="polite"><div class="loading-card"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" /><strong id="globalLoadingTitle">Actualizando tus datos…</strong><span>Un momento, ya casi está.</span></div></div>
+    <div class="loading-overlay" id="globalLoading" hidden role="status" aria-live="polite"><div class="loading-card"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png?v=bb7f31b" alt="" /><strong id="globalLoadingTitle">Actualizando tus datos…</strong><span>Un momento, ya casi está.</span></div></div>
     <div class="notice" id="notice"></div>
     <footer>Datos actualizados desde las planillas de Instituto Bruner</footer>
     <script>
@@ -986,7 +986,7 @@
         coursesReturnView = role === "admin" ? "adminApp" : "app";
         $(coursesReturnView).classList.add("hidden");
         $("coursesPage").classList.remove("hidden");
-        $("coursesGrid").innerHTML = '<div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png" alt="" />Consultando cursos…</div>';
+        $("coursesGrid").innerHTML = '<div class="course-guide-empty course-loader"><img class="bruner-mascot running" src="./assets/bruner-mascot-run.png?v=bb7f31b" alt="" />Consultando cursos…</div>';
         $("coursesStamp").textContent = "Cargando…";
         $("title").textContent = "Próximos inicios y cupos";
         window.scrollTo({ top: 0, behavior: "smooth" });
