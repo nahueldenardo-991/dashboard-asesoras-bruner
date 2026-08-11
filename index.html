@@ -336,6 +336,17 @@
         border-radius: 99px;
         font-weight: 850;
       }
+      .source-chart-layout { display:grid; grid-template-columns:minmax(190px,280px) 1fr; gap:28px; align-items:center; }
+      .source-pie { width:min(240px,70vw); aspect-ratio:1; margin:auto; border-radius:50%; position:relative; box-shadow:inset 0 0 0 1px #ffffff88,0 14px 35px #102a4318; }
+      .source-pie::after { content:""; position:absolute; inset:27%; border-radius:50%; background:#fff; box-shadow:0 3px 18px #102a4314; }
+      .source-pie-center { position:absolute; inset:31%; z-index:1; display:grid; place-content:center; text-align:center; font-weight:900; color:var(--navy); }
+      .source-pie-center strong { font-size:29px; line-height:1; }
+      .source-pie-center span { color:var(--muted); font-size:11px; margin-top:4px; }
+      .source-legend { display:grid; gap:9px; }
+      .source-legend-item { display:grid; grid-template-columns:12px minmax(100px,1fr) auto auto; gap:9px; align-items:center; padding:9px 11px; border:1px solid var(--line); border-radius:11px; }
+      .source-dot { width:12px; height:12px; border-radius:50%; }
+      .source-label { font-weight:800; }
+      .source-value,.source-percent { color:var(--muted); font-size:12px; font-weight:750; }
       .sales {
         display: grid;
         gap: 10px;
@@ -453,6 +464,10 @@
         }
         .admin-sales-tools { align-items: stretch; flex-direction: column; }
         .admin-sales-tools label { max-width: none; }
+        .source-chart-layout { grid-template-columns:1fr; gap:18px; }
+        .source-pie { width:min(210px,65vw); }
+        .source-legend-item { grid-template-columns:12px minmax(90px,1fr) auto; }
+        .source-percent { grid-column:3; }
       }
       @media (max-width: 400px) {
         .wrap {
@@ -726,6 +741,7 @@
         <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
       </section>
       <section class="panel"><div class="panel-head"><div><h2>Ranking mensual</h2><div class="muted">Ventas reales y objetivo personal declarado</div></div></div><div class="sales" id="adminRanking"></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>Procedencia de las ventas</h2><div class="muted">Cruce por los últimos cuatro dígitos del teléfono</div></div><span class="count" id="adminSourceMatched">0 identificadas</span></div><div class="source-chart-layout"><div class="source-pie" id="adminSourcePie"><div class="source-pie-center"><strong id="adminSourceTotal">0</strong><span>ventas</span></div></div><div class="source-legend" id="adminSourceLegend"></div></div></section>
       <section class="panel" id="adminSalesPanel">
         <div class="print-sales-heading"><h1>Instituto Bruner · Detalle de ventas</h1><p id="adminPrintSalesSubtitle"></p></div>
         <div class="panel-head"><div><h2>Detalle de ventas del equipo</h2><div class="muted">Cada inscripción y la persona responsable de la venta</div></div><span class="count" id="adminSalesCount">0 ventas</span></div>
@@ -1339,6 +1355,7 @@
           const g = a.goal || 0, p = g ? Math.round(a.sales / g * 100) : 0;
           return `<article class="sale"><div><div class="student">#${i + 1} · ${esc(a.advisor)}</div><div class="dni">${g ? p + "% de su meta" : "Meta personal pendiente"}</div></div><div><div class="course">${a.sales} ventas</div><div class="course-start">Objetivo: ${g || "—"}</div></div><div class="bar"><i style="width:${Math.min(100, p)}%"></i></div></article>`;
         }).join("");
+        renderAdminSources(d.sourceBreakdown || [], d.teamSales || 0);
         const previousSalesAdvisor = $("adminSalesAdvisor").value;
         const salesAdvisors = [...new Set(d.sales.map((sale) => sale.advisor || "Sin asignar"))].sort((a, b) => a.localeCompare(b, "es"));
         $("adminSalesAdvisor").innerHTML = '<option value="">Todas las asesoras</option>' + salesAdvisors.map((advisor) => `<option value="${esc(advisor)}">${esc(advisor)}</option>`).join("");
@@ -1353,6 +1370,23 @@
           return `<tr><td>${esc(a.advisor)}</td><td>${a.sales}</td><td class="money">${ars.format(c.rate)}</td><td class="money">${ars.format(c.base)}</td><td class="money bonus">${bonus ? "+" + ars.format(bonus) : ars.format(0)}</td><td class="money">${ars.format(total)}</td></tr>`;
         }).join("");
         $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
+      }
+      function renderAdminSources(items, total) {
+        const colors = ["#6519ff", "#087fdb", "#00a36c", "#f6a21a", "#eb4d76", "#7457c8", "#2e95a3", "#9b6a3d"],
+          values = items.length ? items : [{ label: "Sin identificar", count: total || 1, percent: 100 }],
+          chartTotal = items.reduce((sum, item) => sum + Number(item.count || 0), 0),
+          identified = items.filter((item) => item.label !== "Sin identificar").reduce((sum, item) => sum + Number(item.count || 0), 0);
+        let cursor = 0;
+        const segments = values.map((item, index) => {
+          const size = chartTotal ? Number(item.count || 0) / chartTotal * 100 : 100,
+            start = cursor, end = cursor + size;
+          cursor = end;
+          return `${colors[index % colors.length]} ${start}% ${end}%`;
+        });
+        $("adminSourcePie").style.background = `conic-gradient(${segments.join(",")})`;
+        $("adminSourceTotal").textContent = chartTotal;
+        $("adminSourceMatched").textContent = `${identified} de ${chartTotal} identificadas`;
+        $("adminSourceLegend").innerHTML = items.length ? items.map((item, index) => `<div class="source-legend-item"><i class="source-dot" style="background:${colors[index % colors.length]}"></i><span class="source-label">${esc(item.label)}</span><span class="source-value">${item.count} ${item.count === 1 ? "venta" : "ventas"}</span><span class="source-percent">${item.percent}%</span></div>`).join("") : '<div class="empty">Todavía no hay ventas para analizar.</div>';
       }
       function renderAdminSales() {
         const data = state.adminData || { sales: [], month: "" },
