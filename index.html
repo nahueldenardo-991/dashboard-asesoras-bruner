@@ -570,6 +570,7 @@
       .sale-submit-row .sale-button { min-width:190px; min-height:48px; }
       .sale-button:disabled { cursor:wait; opacity:.72; }
       .sale-feedback { font-size:13px; color:var(--muted); }
+      .field-help { display:block; margin-top:5px; color:var(--muted); font-size:11px; font-weight:650; }
       .sale-feedback.success { color:#087b57; font-weight:850; }
       .sale-feedback.error { color:#b42318; font-weight:850; }
       .sale-progress { width:min(440px,100%); margin-top:12px; }
@@ -768,7 +769,7 @@
           <label>Apellido completo<input id="saleLastName" required autocomplete="family-name" /></label>
           <label>Nombre completo<input id="saleFirstName" required autocomplete="given-name" /></label>
           <label>DNI<input id="saleDni" required inputmode="numeric" /></label>
-          <label>Teléfono personal<input id="salePhone" required inputmode="tel" autocomplete="tel" placeholder="Ej.: 351 555 1234" /></label>
+          <label>Teléfono personal<input id="salePhone" required inputmode="tel" autocomplete="tel" placeholder="Ej.: 351 555-1234" aria-describedby="salePhoneHelp" /><small id="salePhoneHelp" class="field-help">Ingresá los 10 números. Podés usar espacios o guiones.</small></label>
           <label>Código de curso<input id="saleCourse" required placeholder="Copiar y pegar" /></label>
           <label>Monto abonado total<input id="saleAmount" type="number" min="0" step="0.01" required inputmode="decimal" /></label>
           <label>Descripción de pago<select id="saleDescription" required><option value="">Elegí una opción</option><option>Inscripción</option><option>Inscripción + cuota</option><option>Cuota</option><option>Pago parcial / Adelanto</option><option>Curso completo</option><option>Beca - Aprender un oficio, impulsar tu futuro</option></select></label>
@@ -1234,6 +1235,14 @@
       $("nativeSaleForm").onsubmit = async (e) => {
         e.preventDefault();
         const button = e.submitter, feedback = $("saleFeedback");
+        const phoneText = $("salePhone").value.trim(), phoneDigits = phoneText.replace(/\D/g, "");
+        if (phoneDigits.length !== 10 || !/^[\d\s-]+$/.test(phoneText)) {
+          $("salePhone").setCustomValidity("Ingresá exactamente 10 números. Solo podés agregar espacios o guiones.");
+          $("salePhone").reportValidity();
+          $("salePhone").focus();
+          return;
+        }
+        $("salePhone").setCustomValidity("");
         button.disabled = true;
         button.textContent = "Guardando…";
         $("saleProgress").hidden = false;
@@ -1409,6 +1418,7 @@
         window.print();
         setTimeout(() => { document.title = previousTitle; }, 1200);
       };
+      $("salePhone").oninput = () => $("salePhone").setCustomValidity("");
       $("openAdminCourses").onclick = () => openCourses("admin");
       $("refreshCourses").onclick = () => loadUpcoming(coursesRole, true);
       $("coursesSearch").oninput = renderUpcomingList;
