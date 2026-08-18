@@ -516,6 +516,11 @@
       .head-copy { display:flex; align-items:center; gap:18px; }
       .personal { background: linear-gradient(135deg, #005fba, #6519ff); }
       .team { background: linear-gradient(135deg, #062441, #005fba); }
+      .supervisor-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:18px; }
+      .supervisor-kpi { padding:12px; border:1px solid #ffffff2e; border-radius:10px; background:#ffffff12; }
+      .supervisor-kpi span { display:block; font-size:10px; font-weight:850; letter-spacing:.06em; text-transform:uppercase; opacity:.72; }
+      .supervisor-kpi strong { display:block; margin-top:6px; font:700 clamp(20px,2.4vw,30px)/1 "Vice City Bruner",Arial,sans-serif; }
+      .supervisor-kpi small { display:block; margin-top:5px; font-size:11px; opacity:.76; }
       .login, .toolbar, .panel, .card { border-radius: 8px; }
       .primary, .refresh, .admin-link, .hero button { border-radius: 8px; }
       .goal-race { position:relative; height:68px; margin-top:14px; overflow:hidden; }
@@ -596,7 +601,7 @@
       @keyframes mascot-run { 0%,100%{transform:translate(-7px,2px) rotate(-2deg)} 50%{transform:translate(7px,-7px) rotate(2deg)} }
       @media(prefers-reduced-motion:reduce){.bruner-mascot.dancing,.bruner-mascot.running,.sale-progress-bar{animation-duration:2.4s}}
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
-      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
+      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid,.supervisor-summary{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0} }
       @media(max-width:700px){ .course-filters{grid-template-columns:1fr}.course-visible-count{white-space:normal} }
       @media print {
         @page { size: A4; margin: 13mm; }
@@ -739,7 +744,7 @@
       <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="openAdminCourses">Próximos inicios</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
       <section class="hero">
         <article class="personal"><div class="kicker">Objetivo mensual grupal</div><div class="hero-row"><div class="big"><span id="adminTeamSales">0</span> / <span id="adminTeamGoalView">—</span></div><button id="adminEditTeamGoal">Editar meta</button></div><div class="bar"><i id="adminTeamBar"></i></div><div class="goal-race"><span class="race-label">Carrera hacia la meta</span><div class="race-track"></div><span class="race-horse" id="adminTeamHorse">🐎</span><span class="race-finish">🏁</span></div><div class="under"><span id="adminTeamPercent">Meta del equipo</span><span id="adminTeamRemaining"></span></div></article>
-        <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Ranking y objetivos de las asesoras activas</div></article>
+        <article class="team"><div class="kicker">Panel de supervisión</div><div class="big">Nahuel</div><div class="muted">Resumen comercial del mes seleccionado</div><div class="supervisor-summary"><div class="supervisor-kpi"><span>Ventas de hoy</span><strong id="adminTodaySales">0</strong><small>ventas cargadas</small></div><div class="supervisor-kpi"><span>Proyección mensual</span><strong id="adminProjectedSales">0</strong><small>ventas estimadas</small></div><div class="supervisor-kpi"><span>Facturación proyectada</span><strong id="adminProjectedAmount">$0</strong><small>según cobro promedio</small></div></div></article>
       </section>
       <section class="panel"><div class="panel-head"><div><h2>Ranking mensual</h2><div class="muted">Ventas reales y objetivo personal declarado</div></div></div><div class="sales" id="adminRanking"></div></section>
       <section class="panel"><div class="panel-head"><div><h2>Procedencia de las ventas</h2><div class="muted">Cruce por los últimos cuatro dígitos del teléfono</div></div><span class="count" id="adminSourceMatched">0 identificadas</span></div><div class="source-chart-layout"><div class="source-pie" id="adminSourcePie"><div class="source-pie-center"><strong id="adminSourceTotal">0</strong><span>ventas</span></div></div><div class="source-legend" id="adminSourceLegend"></div></div></section>
@@ -890,6 +895,17 @@
       ]);
       const isWorkingDay = (date) => date.getDay() !== 0 && !OFFICIAL_HOLIDAYS.has(`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`);
       const workingDaysTotal = (k) => { const [y,m]=k.split("-").map(Number), last=new Date(y,m,0); let total=0; for(let day=1;day<=last.getDate();day++) if(isWorkingDay(new Date(y,m-1,day))) total++; return total; };
+      const workProjection = (month, sales, override = 0) => {
+        const [y,m] = month.split("-").map(Number), now = new Date(), last = new Date(y,m,0),
+          current = now.getFullYear() === y && now.getMonth() + 1 === m;
+        let total = 0, elapsed = 0;
+        for (let day = 1; day <= last.getDate(); day++) {
+          const date = new Date(y,m-1,day);
+          if (isWorkingDay(date)) { total++; if (!current || date <= now) elapsed++; }
+        }
+        const effective = Number(override) || total;
+        return current && elapsed ? Math.round(Number(sales || 0) / elapsed * effective) : Number(sales || 0);
+      };
       const daysLeft = (k, override = 0) => {
         const [y, m] = k.split("-").map(Number),
           n = new Date(),
@@ -1359,6 +1375,10 @@
         $("adminTeamHorse").style.left = `calc(${Math.min(94, percent * .94)}% - 8px)`;
         $("adminTeamPercent").textContent = goal ? percent + "% alcanzado" : "Definí el objetivo grupal";
         $("adminTeamRemaining").textContent = goal ? (remaining ? "Faltan " + remaining : "¡Meta alcanzada! 🎉") : "";
+        const projectedSales = workProjection(d.month, d.teamSales, d.workingDaysOverride);
+        $("adminTodaySales").textContent = d.todaySales || 0;
+        $("adminProjectedSales").textContent = projectedSales;
+        $("adminProjectedAmount").textContent = ars.format(Math.round(projectedSales * Number(d.averageAmount || 0)));
         $("adminGoal").value = goal || "";
         $("adminRanking").innerHTML = d.advisors.map((a, i) => {
           const g = a.goal || 0, p = g ? Math.round(a.sales / g * 100) : 0;
