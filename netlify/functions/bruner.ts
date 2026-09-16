@@ -39,7 +39,7 @@ export default async (request: Request) => {
     incoming.searchParams.delete("_");
     const action = incoming.searchParams.get("action") || "";
     const sharedStore = getStore({ name: "bruner-settings", consistency: "strong" });
-    if (action === "partnerDashboard" && incoming.searchParams.get("refresh") !== "1") {
+    if (action === "partnerDashboard" && incoming.searchParams.get("refresh") !== "1" && incoming.searchParams.get("incomeRefresh") !== "1") {
       const token = incoming.searchParams.get("token") || "";
       const month = incoming.searchParams.get("month") || "";
       const session = token ? await sharedStore.get("management-sessions/" + token, { type: "json" }) as { expiresAt?: number } | null : null;
