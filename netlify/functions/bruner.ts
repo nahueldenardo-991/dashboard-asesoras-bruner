@@ -4,6 +4,10 @@ import { getStore } from "@netlify/blobs";
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyhKiGC0ZzG2KpOc-TRoOih2qXUTsG2ckWi98Blyc1j0Fma_R0ec5QcAoysElUBvCo/exec";
 
+const INCOME_POTENTIAL_BY_MONTH: Record<string, number> = {
+  "2026-09": 29394000,
+};
+
 export default async (request: Request) => {
   if (request.method === "OPTIONS") {
     return new Response(null, {
@@ -64,7 +68,13 @@ export default async (request: Request) => {
         } catch {
           // El valor personalizado es opcional.
         }
-        return json({ ...cached.data, workingDaysOverride: setting?.days || 0 });
+        const incomePotential = INCOME_POTENTIAL_BY_MONTH[month] || 0;
+        return json({
+          ...cached.data,
+          workingDaysOverride: setting?.days || 0,
+          incomePotential,
+          income: { ...((cached.data.income as Record<string, unknown>) || {}), potential: incomePotential },
+        });
       }
     }
     const target = new URL(APPS_SCRIPT_URL);
@@ -100,6 +110,10 @@ export default async (request: Request) => {
         // Mantener el panel operativo con el calendario calculado.
       }
       parsed.workingDaysOverride = setting?.days || 0;
+      if (action === "partnerDashboard") {
+        parsed.incomePotential = INCOME_POTENTIAL_BY_MONTH[month] || 0;
+        parsed.income = { ...(parsed.income || {}), potential: parsed.incomePotential };
+      }
     }
     return new Response(JSON.stringify(parsed), {
       status: 200,
