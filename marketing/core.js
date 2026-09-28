@@ -1,4 +1,4 @@
-import {coursePricing} from './reference.js?v=20260928-3';
+import {coursePricing} from './reference.js?v=20260928-4';
 export const STATES=['Idea','Pendiente','En producción','Para revisar','Aprobado','Publicado'];
 export const PLATFORMS=['Instagram','WhatsApp','Facebook','TikTok','Anuncios pagos'];
 export const FORMATS=['Reel','Carrusel','Historias','WhatsApp','Publicación'];

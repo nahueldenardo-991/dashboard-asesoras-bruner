@@ -8,8 +8,8 @@ Página independiente: `marketing.html`. Publicación: GitHub Pages del reposito
 - Lectura comercial: `partnerDashboard`. Ventas, importes abonados, metas, desglose por curso/sede, serie diaria y procedencias son respuestas del backend vigente. No se recalculan inscripciones, ventas o cruces de teléfonos en marketing.
 - Oferta: `upcomingCourses`. Se conservan los cupos y la deduplicación de inscriptos del backend. La capacidad visual reproduce gestión: máximo entre capacidad informada e inscriptos + disponibles. La fuente omite cursos marcados “Completo”; los suspendidos o devueltos sin cupos no se promocionan.
 - Presentación de horarios, promociones y proyección: generada desde `index.html` y `gestion.html` mediante `node scripts/build-marketing-reference.cjs`. El módulo generado está versionado. Después de modificar las reglas comerciales originales, regenerarlo y ejecutar las pruebas de paridad.
-- La facturación aquí es el monto abonado en las ventas, como en gestión; no se confunde con los ingresos efectivos del reporte de cobros.
-- Carga independiente de comercial, cursos y cada mes histórico. Tiempo límite por consulta de 45 segundos. El ingreso termina al autenticar, sin esperar que las fuentes de datos funcionen. Una respuesta vieja no puede reemplazar el mes seleccionado posteriormente.
+- El panorama no muestra facturación, importes de ventas, rendimiento por sede ni comparación mensual. El ranking ordena inscripciones comerciales por cantidad (sin becas), nunca por importe. Precios y promociones del curso se conservan para redactar contenido.
+- Carga independiente de comercial, cursos del mes seleccionado. Tiempo límite por consulta de 45 segundos. El ingreso termina al autenticar, sin esperar que las fuentes de datos funcionen. Una respuesta vieja no puede reemplazar el mes seleccionado posteriormente.
 - Planificación local: `localStorage`, clave `bruner.marketing.v1`. No se envían contenidos a servidores. Las copias JSON se importan agregando IDs nuevos, sin sobrescribir IDs existentes. Una copia corrupta no se sobrescribe. El guardado solo ocurre por acción explícita.
 
 No se modificaron `index.html`, `gestion.html`, Apps Script, funciones Netlify, permisos, claves ni planillas comerciales.
@@ -67,3 +67,7 @@ git diff --exit-code -- index.html gestion.html netlify/functions/bruner.ts
 La suite valida fechas inválidas y cambios de año, semáforos en 7/8/14/15 días, sobreocupación, suspendidos/completos, cobertura, promociones idénticas a asesoras, datos faltantes y sintaxis de los paneles anteriores. Las pruebas de navegador se ejecutan con un servidor aislado y datos explícitamente sintéticos fuera del repositorio; no se publican cuentas, sesiones o fixtures de prueba.
 
 Antes de cada publicación: probar login, Actualizar, aislamiento de fallas, filtros, copiar, guardado, propuestas, biblioteca y tamaños de escritorio/celular. Incrementar la versión en HTML e imports de módulos. Publicar solo los archivos de marketing y documentación; nunca agregar archivos locales de credenciales ni Apps Script ignorado.
+
+## Actualización 20260928-4
+
+Se retiraron los indicadores de facturación, toda la comparación mensual y los bloques de rendimiento por curso/sede. Se agregó ranking por cantidad de inscripciones comerciales del mes, sin importes, y contador de publicaciones en Panorama: total, Instagram, WhatsApp y cursos comunicados. El botón Registrar publicación abre el editor con estado Publicado y fecha de hoy, pero no guarda hasta confirmar. Los contadores se actualizan al guardar, editar, eliminar, importar o cambiar de mes. Se usa la fecha real de publicación, incluso si la planificación pertenece a otro mes. El guardado local existente se conserva.

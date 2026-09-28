@@ -4,3 +4,5 @@
 .panel,.metric,.course-card,.filters label{min-width:0}.metric strong,.course-card h3,.alert{overflow-wrap:anywhere}.bar strong{max-width:150px;overflow-wrap:anywhere}.review-check{display:flex;align-items:center;gap:12px}.review-check input{width:20px;min-height:20px}
 @media(max-width:850px){.two{grid-template-columns:minmax(0,1fr)}.metrics,.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.three,.form-grid,.course-promo-list{grid-template-columns:minmax(0,1fr)}}
+
+#publicationMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}

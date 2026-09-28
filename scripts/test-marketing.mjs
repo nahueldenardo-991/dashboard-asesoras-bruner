@@ -3,6 +3,18 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {dateNumber,shiftDay,previousMonth,occupancy,priority,promotionOptions,draft,fingerprint} from '../marketing/core.js';
 import {coursePaymentPromotions} from '../marketing/reference.js';
+import {publicationStats,enrollmentRanking} from '../marketing/activity.js';
+const activity=[
+ {kind:'content',state:'Publicado',date:'2026-08-28',publishedDate:'2026-09-02',platform:'Instagram',courseCode:'A'},
+ {kind:'content',state:'Publicado',date:'2026-09-01',publishedDate:'2026-09-03',platform:'WhatsApp',courseCode:'A'},
+ {kind:'content',state:'Publicado',date:'2026-09-01',publishedDate:'2026-08-31',platform:'Instagram',courseCode:'B'},
+ {kind:'idea',state:'Publicado',publishedDate:'2026-09-04',platform:'Instagram'},
+ {kind:'content',state:'Aprobado',publishedDate:'2026-09-05',platform:'Instagram'},
+];
+assert.deepEqual(publicationStats(activity,'2026-09'),{total:2,instagram:1,whatsapp:1,courses:1});
+assert.equal(publicationStats(activity,'2026-08').total,1);
+assert.equal(publicationStats([],'2026-09').total,0);
+assert.deepEqual(enrollmentRanking([{label:'B',count:2,amount:999},{label:'A',count:5,amount:1}]),[{label:'A',count:5},{label:'B',count:2}]);
 const day='2026-09-28',course={code:'TEST',course:'Curso de prueba',status:'En oferta',startDate:'05/10/2026',capacity:10,enrolled:4,available:6,monthlyFee:50000,duration:'4 meses',site:'Sede de prueba'};
 assert.equal(dateNumber('31/02/2026'),NaN);
 assert.equal(shiftDay('2026-12-31',1),'2027-01-01');
