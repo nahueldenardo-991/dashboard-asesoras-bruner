@@ -71,3 +71,13 @@ Antes de cada publicación: probar login, Actualizar, aislamiento de fallas, fil
 ## Actualización 20260928-4
 
 Se retiraron los indicadores de facturación, toda la comparación mensual y los bloques de rendimiento por curso/sede. Se agregó ranking por cantidad de inscripciones comerciales del mes, sin importes, y contador de publicaciones en Panorama: total, Instagram, WhatsApp y cursos comunicados. El botón Registrar publicación abre el editor con estado Publicado y fecha de hoy, pero no guarda hasta confirmar. Los contadores se actualizan al guardar, editar, eliminar, importar o cambiar de mes. Se usa la fecha real de publicación, incluso si la planificación pertenece a otro mes. El guardado local existente se conserva.
+
+## Actualización 20260928-5: Instagram
+
+Se incorporan ocho publicaciones/reels de septiembre de @bruner.instituto, consultados mediante la interfaz de Instagram y contrastados con el listado Publicadas de Meta Business Suite. `marketing/instagram-snapshot.json` contiene únicamente descripciones, enlaces y fechas de esas publicaciones; no incluye sesiones, credenciales, conversaciones ni estadísticas privadas. Es una captura puntual y no una conexión automática. No incluye historias, anuncios ni históricos de otros meses. El panel muestra explícitamente fecha de revisión y alcance.
+
+`instagram.js` identifica cursos por palabras clave normalizadas (acentos y mayúsculas), deja sin identificar las descripciones ambiguas, admite varias coincidencias por publicación y nunca infiere una comisión/sede. Convierte las fechas a Argentina. Une el registro verificado con las publicaciones locales sin modificar el almacenamiento local; deduplica por identificador de enlace Instagram, incluso entre rutas `/p/` y `/reel/` y parámetros de seguimiento. Los datos verificados determinan la fecha real de un duplicado. Panorama muestra detalle y enlaces, y Producción usa el mismo total publicado.
+
+Para actualizar esta captura se debe volver a consultar el listado Publicadas de la cuenta, verificar fechas y enlaces y reemplazar el JSON sin incorporar mensajes ni datos privados. Actualizar datos recarga la captura publicada, no consulta Meta directamente. Una sincronización permanente requiere una integración autenticada de Meta en un servidor; nunca colocar tokens en GitHub Pages. No se creó ninguna integración, credencial o tarea programada.
+
+Verificación adicional: `node scripts/test-instagram.mjs` (palabras clave, fechas en cambio de mes, deduplicación y conteos del registro real).

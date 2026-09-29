@@ -5,7 +5,7 @@ export function publicationStats(records, month) {
     total: published.length,
     instagram: published.filter(r => r.platform === 'Instagram').length,
     whatsapp: published.filter(r => r.platform === 'WhatsApp').length,
-    courses: new Set(published.map(r => r.courseCode).filter(Boolean)).size,
+    courses: new Set(published.flatMap(r => r.courseNames || [r.courseName || r.courseCode]).filter(Boolean).map(name => name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())).size,
   };
 }
 export function enrollmentRanking(items) {
