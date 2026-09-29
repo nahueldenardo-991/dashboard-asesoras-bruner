@@ -6,3 +6,5 @@
 @media(max-width:520px){.three,.form-grid,.course-promo-list{grid-template-columns:minmax(0,1fr)}}
 
 #publicationMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.insights-dialog{width:min(1240px,94vw);max-width:94vw;max-height:90vh;overflow:auto}.insights-dialog .metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.insights-table{overflow:auto}.insights-table table{min-width:1000px}.insights-table td:nth-child(2){min-width:240px;max-width:340px}.insights-dialog details{margin:18px 0}.insights-dialog summary{cursor:pointer}.insights-dialog #insightsError{color:#a51b3c}@media(max-width:680px){.insights-dialog .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}

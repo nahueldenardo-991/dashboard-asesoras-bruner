@@ -81,3 +81,11 @@ Se incorporan ocho publicaciones/reels de septiembre de @bruner.instituto, consu
 Para actualizar esta captura se debe volver a consultar el listado Publicadas de la cuenta, verificar fechas y enlaces y reemplazar el JSON sin incorporar mensajes ni datos privados. Actualizar datos recarga la captura publicada, no consulta Meta directamente. Una sincronización permanente requiere una integración autenticada de Meta en un servidor; nunca colocar tokens en GitHub Pages. No se creó ninguna integración, credencial o tarea programada.
 
 Verificación adicional: `node scripts/test-instagram.mjs` (palabras clave, fechas en cambio de mes, deduplicación y conteos del registro real).
+
+## Actualización 20260928-6: insights privados
+
+El botón Insights de Instagram abre un visor de copias privadas en el navegador, independiente del acceso a las fuentes comerciales. Las métricas NO se incorporan al repositorio ni a los recursos públicos de GitHub Pages. Se guardan bajo `bruner.marketing.privateInsights.v1` en el navegador que importa la copia. Esto no constituye un almacén compartido ni una integración automática con Meta. El visor local no permite consultar métricas de otro dispositivo.
+
+El visor muestra el período observado en Instagram, fecha de consulta, métricas de cuenta, porcentajes por formato y audiencia, y una tabla ordenable/filtrable por curso con métricas de piezas verificadas. Cuenta y contenido conservan su fuente y alcance de consulta: no se suman alcances de piezas como personas únicas, no se equipara el período móvil con el mes comercial, ni se calculan métricas no observadas. Cero es distinto de dato ausente (—).
+
+Importación de JSON validado mediante archivo o pegado, exportación local, sin llamadas de red desde el módulo de insights. Se rechazan cuentas diferentes, valores negativos/no numéricos, porcentajes fuera de rango, URLs externas y publicaciones duplicadas. Solo se conservan campos admitidos; no se importan credenciales. La copia real queda fuera del repositorio. Pruebas: `node scripts/test-insights.mjs`, con datos sintéticos.
