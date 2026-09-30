@@ -1,3 +1,4 @@
+import {initLiveInstagram} from './live-instagram.js?v=20260930-1';
 import {initInsights} from './insights.js?v=20260928-6';
 import {snapshotRecords,mergePublications} from './instagram.js?v=20260928-6';
 import {publicationStats,enrollmentRanking} from './activity.js?v=20260928-6';
@@ -75,4 +76,4 @@ $('studioFormat').innerHTML=opt(FORMATS);$('editFormat').innerHTML=opt(FORMATS);
 
 $('month').max=today().slice(0,7);
 
-initInsights();
+initInsights();initLiveInstagram(()=>token);

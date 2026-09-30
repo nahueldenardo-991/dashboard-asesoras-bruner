@@ -89,3 +89,28 @@ El botón Insights de Instagram abre un visor de copias privadas en el navegador
 El visor muestra el período observado en Instagram, fecha de consulta, métricas de cuenta, porcentajes por formato y audiencia, y una tabla ordenable/filtrable por curso con métricas de piezas verificadas. Cuenta y contenido conservan su fuente y alcance de consulta: no se suman alcances de piezas como personas únicas, no se equipara el período móvil con el mes comercial, ni se calculan métricas no observadas. Cero es distinto de dato ausente (—).
 
 Importación de JSON validado mediante archivo o pegado, exportación local, sin llamadas de red desde el módulo de insights. Se rechazan cuentas diferentes, valores negativos/no numéricos, porcentajes fuera de rango, URLs externas y publicaciones duplicadas. Solo se conservan campos admitidos; no se importan credenciales. La copia real queda fuera del repositorio. Pruebas: `node scripts/test-insights.mjs`, con datos sintéticos.
+# Conexión de Instagram (30/09/2026)
+
+La sección «Consulta automática a Instagram» usa `/api/instagram` del servidor
+`bruner-asesoras-api`. Requiere el token de la sesión de gestión en Authorization;
+el token de Meta permanece en `BRUNER_INSTAGRAM_ACCESS_TOKEN`, secreto de producción
+en Netlify. La aplicación Meta es 1135630895656740 y la cuenta autorizada es
+bruner.instituto (17841465116023662).
+
+Consulta al abrir los insights y cada cinco minutos mientras el diálogo y la
+página están visibles; también permite actualización manual. Los datos de Meta
+pueden tener demora. La copia importada anterior conserva su fecha y se muestra
+separada de la consulta automática. No se guarda la respuesta automática en
+localStorage ni en archivos públicos.
+
+Primera versión: métricas de cuenta de los últimos 30 días y publicaciones con
+curso identificado por descripción, Me gusta y comentarios. Recupera hasta las
+50 publicaciones más recientes y avisa si la cobertura de los 30 días es parcial.
+No incluye todavía el desglose de audiencia ni insights individuales completos.
+La validación de una consulta real autenticada está pendiente; las pruebas locales
+usan datos sintéticos. No presentar el acceso real como verificado hasta completar
+esa prueba. Si Meta revoca o vence el token, el panel informa el error.
+
+El despliegue de Netlify preserva los archivos del sitio existente y su función
+comercial original: el archivo comercial del repositorio tiene cambios posteriores
+que no deben publicarse accidentalmente con esta integración.
