@@ -1002,8 +1002,13 @@
         return value && !/(1899|GMT|Standard Time)/i.test(value) ? value : "Horario a confirmar";
       }
       function coursePaymentPromotions(course) {
-        const monthlyFee = Number(course.monthlyFee) || 0;
-        const fullPrice = Number(course.fullPrice) || 0;
+        const price = coursePriceValues(course);
+        const monthlyFee = price.monthlyFee;
+        const fullPrice = price.fullPrice;
+        if (price.noPromotions) {
+          const registration = 26000, total = fullPrice + registration;
+          return `<section class="course-promotions"><div class="course-promotions-title"><strong>Valores de Taller Globología</strong><small>Este curso no tiene promociones vigentes</small></div><div class="course-promo-list"><div class="course-promo"><div class="course-promo-name">Valor del curso</div><div class="course-promo-detail">Pago del taller completo</div><div class="course-promo-total">${ars.format(fullPrice)}</div></div><div class="course-promo"><div class="course-promo-name">Inscripción</div><div class="course-promo-detail">Valor de inscripción</div><div class="course-promo-total">${ars.format(registration)}</div></div><div class="course-promo"><div class="course-promo-name">Total</div><div class="course-promo-detail">Curso + inscripción · sin promociones</div><div class="course-promo-total">${ars.format(total)}</div></div></div></section>`;
+        }
         const duration = String(course.duration || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const monthMatch = duration.match(/(\d+(?:[.,]\d+)?)\s*(?:mes|meses)\b/);
         const months = monthMatch ? Number(monthMatch[1].replace(",", ".")) : 0;
@@ -1019,6 +1024,11 @@
           ? `${months} ${months === 1 ? "mes" : "meses"} × ${ars.format(monthlyFee)} = ${ars.format(basePrice)}`
           : `Valor total del curso: ${ars.format(basePrice)}`;
         return `<section class="course-promotions"><div class="course-promotions-title"><strong>Promociones por pago del curso completo</strong><small>Precio base: ${esc(calculation)}</small></div><div class="course-promo-list"><div class="course-promo"><div class="course-promo-name">Tarjeta de crédito</div><div class="course-promo-detail">Curso + inscripción de ${ars.format(registration)} · hasta 6 cuotas sin interés de ${ars.format(cardTotal / 6)}</div><div class="course-promo-total">${ars.format(cardTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Efectivo</div><div class="course-promo-detail">20% de descuento · inscripción bonificada</div><div class="course-promo-total">${ars.format(cashTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Transferencia</div><div class="course-promo-detail">20% de descuento + 50% de inscripción (${ars.format(registration / 2)})</div><div class="course-promo-total">${ars.format(transferTotal)}</div></div></div></section>`;
+      }
+      function coursePriceValues(course) {
+        const name = String(course.course || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        if (name === "TALLER GLOBOLOGIA") return { monthlyFee: 0, fullPrice: 200000, noPromotions: true };
+        return { monthlyFee: Number(course.monthlyFee) || 0, fullPrice: Number(course.fullPrice) || 0, noPromotions: false };
       }
       function renderUpcoming(data, resetFilter = true) {
         const grid = $("coursesGrid"), stamp = $("coursesStamp");
@@ -1045,8 +1055,9 @@
         $("coursesGrid").innerHTML = visible.length ? visible.map((c) => {
           const month = courseMonthKey(c.startDate), heading = month !== lastMonth ? `<div class="course-month-heading">${esc(courseMonthLabel(month))}</div>` : "";
           lastMonth = month;
-          const priceTitle = Number(c.monthlyFee) > 0 ? "Valor de cuota" : Number(c.fullPrice) > 0 ? "Valor del curso" : "Precio";
-          const priceValue = Number(c.monthlyFee) > 0 ? ars.format(c.monthlyFee) : Number(c.fullPrice) > 0 ? ars.format(c.fullPrice) : "Consultar";
+          const coursePrice = coursePriceValues(c);
+          const priceTitle = coursePrice.monthlyFee > 0 ? "Valor de cuota" : coursePrice.fullPrice > 0 ? "Valor del curso" : "Precio";
+          const priceValue = coursePrice.monthlyFee > 0 ? ars.format(coursePrice.monthlyFee) : coursePrice.fullPrice > 0 ? ars.format(coursePrice.fullPrice) : "Consultar";
           const classSchedule = courseClassSchedule(c.code, c.time);
           const whatsappButton = c.whatsappLink ? `<div class="course-link-row"><button class="copy-whatsapp-link" type="button" data-whatsapp="${encodeURIComponent(c.whatsappLink)}"><span class="whatsapp-mark" aria-hidden="true">☎</span>Copiar link del grupo</button></div>` : "";
           const isCritical = statusClass(c.status) === "status-critical";
@@ -1509,14 +1520,17 @@
           "Meli",
           "Juli",
           "Fer A.",
+          "Gian",
+          "Cata",
         ];
         try {
           const d = await jsonp({ action: "listAdvisors" });
           if (!d.ok) throw Error(d.error);
-          state.advisors = d.advisors;
+          const advisors = [...new Set([...(d.advisors || []), "Cata"])];
+          state.advisors = advisors;
           $("advisor").innerHTML =
             '<option value="">Seleccioná tu nombre</option>' +
-            d.advisors
+            advisors
               .map(
                 (name) => `<option value="${esc(name)}">${esc(name)}</option>`,
               )
