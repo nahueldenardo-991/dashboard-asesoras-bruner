@@ -729,7 +729,7 @@
           <div class="sim-result"><span>Sin premio grupal</span><strong id="simBase">$0</strong></div>
           <div class="sim-result"><span>Con premio +10%</span><strong id="simPrize">$0</strong></div>
         </div>
-        <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
+        <div class="tier-list"><span>1–19: $20.000 por venta</span><span>20–29: $22.000</span><span>30–39: $23.000</span><span>40–50: $24.000</span></div>
       </section>
       <section class="panel">
         <div class="panel-head">
@@ -760,7 +760,7 @@
         <div class="panel-head"><div><h2>Cuadro de comisiones</h2><div class="muted">Estimación mensual según el esquema vigente</div></div><span class="count" id="adminCommissionStatus">Sin premio grupal</span></div>
         <div class="commission-table-wrap"><table class="commission-table"><thead><tr><th>Asesora</th><th>Ventas</th><th>Valor por venta</th><th>Comisión base</th><th>Premio 10%</th><th>Total estimado</th></tr></thead><tbody id="adminCommissionRows"></tbody></table></div>
         <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
-        <div class="tier-list"><span>1–19: $18.000 por venta</span><span>20–29: $20.000</span><span>30–39: $21.000</span><span>40 o más: $22.000</span></div>
+        <div class="tier-list"><span>1–19: $20.000 por venta</span><span>20–29: $22.000</span><span>30–39: $23.000</span><span>40–50: $24.000</span></div>
       </section>
     </main>
     <main class="wrap hidden sales-form-shell" id="coursesPage">
@@ -952,7 +952,7 @@
       const ars = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
       function commissionFor(sales) {
         const qty = Math.max(0, Math.floor(Number(sales) || 0));
-        const rate = qty === 0 ? 0 : qty < 20 ? 18000 : qty < 30 ? 20000 : qty < 40 ? 21000 : 22000;
+        const rate = qty === 0 ? 0 : qty < 20 ? 20000 : qty < 30 ? 22000 : qty < 40 ? 23000 : 24000;
         const base = qty * rate;
         return { qty, rate, base, withPrize: Math.round(base * 1.1) };
       }
