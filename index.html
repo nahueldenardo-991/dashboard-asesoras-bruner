@@ -601,9 +601,10 @@
       .loading-card span { display:block; margin-top:6px; color:var(--muted); font-size:13px; }
       @keyframes mascot-dance { 0%{transform:translateY(2px) rotate(-7deg) scale(.97)} 55%{transform:translateY(-7px) rotate(5deg) scale(1.03)} 100%{transform:translateY(0) rotate(8deg) scale(1)} }
       @keyframes mascot-run { 0%,100%{transform:translate(-7px,2px) rotate(-2deg)} 50%{transform:translate(7px,-7px) rotate(2deg)} }
+      .course-ranking-panel{overflow:hidden}.course-ranking-legend{display:flex;justify-content:flex-end;gap:18px;margin:-4px 0 12px;color:var(--muted);font-size:12px;font-weight:800}.course-ranking-legend span{display:flex;align-items:center;gap:6px}.ranking-dot{width:10px;height:10px;border-radius:50%;background:#19a974}.ranking-dot.available{background:#dce3eb}.course-ranking{display:grid;gap:9px}.course-ranking-row{display:grid;grid-template-columns:minmax(220px,1.25fr) 105px 105px minmax(180px,1fr) 72px;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(145deg,#fff,#f9fbfd)}.course-ranking-name{display:grid;grid-template-columns:36px minmax(0,1fr);align-items:center;gap:10px}.course-ranking-position{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#ecf8f3;color:#08785a;font:800 16px/1 "Vice City Bruner",Arial,sans-serif}.course-ranking-name strong{display:block;color:#062441;font:700 15px/1.2 "Vice City Bruner",Arial,sans-serif}.course-ranking-name small,.course-ranking-stat small{display:block;margin-top:3px;color:var(--muted);font-size:11px}.course-ranking-stat{color:#10224a}.course-ranking-stat strong{font:800 19px/1 "Vice City Bruner",Arial,sans-serif}.course-ranking-track{height:12px;overflow:hidden;border-radius:999px;background:#dce3eb}.course-ranking-fill{display:block;height:100%;min-width:0;border-radius:inherit;background:linear-gradient(90deg,#0fa66b,#2fc78d)}.course-ranking-fill.medium{background:linear-gradient(90deg,#efa21b,#f6bc43)}.course-ranking-fill.low{background:linear-gradient(90deg,#eb4d76,#f2748e)}.course-ranking-total{text-align:right;color:#10224a;font-weight:900;white-space:nowrap}.course-ranking-row[data-empty="true"] .course-ranking-position{background:#fdecef;color:#ad2948}.course-ranking-row[data-empty="true"] .course-ranking-name strong{color:#6b3140}.course-ranking-zero{display:inline-block;margin-left:7px;padding:3px 6px;border-radius:999px;background:#fdecef;color:#ad2948;font-size:10px;font-weight:900;text-transform:uppercase;vertical-align:middle}
       @media(prefers-reduced-motion:reduce){.bruner-mascot.dancing,.bruner-mascot.running,.sale-progress-bar{animation-duration:2.4s}}
       @media(max-width:600px){ .head-copy{align-items:flex-start; flex-direction:column; gap:10px}.brand-logo{width:145px}.goal-race{height:62px} }
-      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid,.supervisor-summary{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0}.course-promo{grid-template-columns:1fr}.course-promo-total{text-align:left}.future-price-head{align-items:flex-start;flex-direction:column}.future-price-enrollment{flex-wrap:wrap;text-align:center} }
+      @media(max-width:700px){ .commission-grid,.simulator,.native-sale-grid,.course-guide-grid,.supervisor-summary{grid-template-columns:1fr}.native-sale-grid .wide{grid-column:auto}.commission-kpi strong{font-size:24px}.native-sale-form{padding:15px}.sales-form-head{align-items:flex-start;flex-direction:column}.course-guide-head,.course-filters{flex-direction:column;align-items:stretch}.course-filters label{min-width:0}.course-visible-count{padding-bottom:0}.course-promo{grid-template-columns:1fr}.course-promo-total{text-align:left}.future-price-head{align-items:flex-start;flex-direction:column}.future-price-enrollment{flex-wrap:wrap;text-align:center}.course-ranking-legend{justify-content:flex-start}.course-ranking-row{grid-template-columns:1fr 1fr;gap:10px}.course-ranking-name,.course-ranking-track{grid-column:1/-1}.course-ranking-total{text-align:left} }
       @media(max-width:700px){ .course-filters{grid-template-columns:1fr}.course-visible-count{white-space:normal} }
       @media print {
         @page { size: A4; margin: 13mm; }
@@ -741,6 +742,11 @@
         </div>
         <div class="sales" id="salesList"></div>
       </section>
+      <section class="panel course-ranking-panel">
+        <div class="panel-head"><div><h2>Ranking de cursos vigentes</h2><div class="muted">Ocupación actual y cupos disponibles · incluye cursos sin inscriptos</div></div><span class="count">Cursos activos</span></div>
+        <div class="course-ranking-legend"><span><i class="ranking-dot enrolled"></i>Inscriptos</span><span><i class="ranking-dot available"></i>Cupos libres</span></div>
+        <div class="course-ranking" id="advisorCourseRanking"><div class="empty">Consultando cursos vigentes…</div></div>
+      </section>
     </main>
     <main class="wrap hidden" id="adminApp">
       <section class="toolbar"><label>Mes<select id="adminDashboardMonth"></select></label><button class="refresh" id="adminRefresh">↻ Actualizar</button><button class="refresh" id="openAdminCourses">Próximos inicios</button><button class="refresh" id="adminEditWorkingDays">Días hábiles</button><button class="sale-button" id="openAdminSale">Cargar venta</button><div class="stamp" id="adminWorkingDaysStatus"></div><div class="stamp" id="adminStamp"></div></section>
@@ -761,6 +767,11 @@
         <div class="commission-table-wrap"><table class="commission-table"><thead><tr><th>Asesora</th><th>Ventas</th><th>Valor por venta</th><th>Comisión base</th><th>Premio 10%</th><th>Total estimado</th></tr></thead><tbody id="adminCommissionRows"></tbody></table></div>
         <div class="commission-summary"><span>Total estimado del equipo</span><strong id="adminCommissionTotal">$0</strong></div>
         <div class="tier-list"><span>1–19: $20.000 por venta</span><span>20–29: $22.000</span><span>30–39: $23.000</span><span>40–50: $24.000</span></div>
+      </section>
+      <section class="panel course-ranking-panel">
+        <div class="panel-head"><div><h2>Ranking de cursos vigentes</h2><div class="muted">Ocupación actual y cupos disponibles · incluye cursos sin inscriptos</div></div><span class="count">Cursos activos</span></div>
+        <div class="course-ranking-legend"><span><i class="ranking-dot enrolled"></i>Inscriptos</span><span><i class="ranking-dot available"></i>Cupos libres</span></div>
+        <div class="course-ranking" id="adminCourseRanking"><div class="empty">Consultando cursos vigentes…</div></div>
       </section>
     </main>
     <main class="wrap hidden sales-form-shell" id="coursesPage">
@@ -986,6 +997,34 @@
         const label = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" }).format(new Date(year, month - 1, 1));
         return label.charAt(0).toUpperCase() + label.slice(1);
       }
+      function renderCourseRanking(targetId, courses) {
+        const target = $(targetId);
+        if (!target) return;
+        const active = [...(courses || [])]
+          .filter((course) => course.code && !/completo|suspendido/i.test(String(course.status || "")))
+          .sort((a, b) => Number(b.enrolled || 0) - Number(a.enrolled || 0) || courseDateValue(a.startDate) - courseDateValue(b.startDate) || String(a.course || "").localeCompare(String(b.course || ""), "es"));
+        target.innerHTML = active.length ? active.map((course, index) => {
+          const enrolled = Math.max(0, Number(course.enrolled) || 0),
+            capacity = Math.max(0, Number(course.capacity) || 0),
+            available = Math.max(0, Number(course.available) || Math.max(0, capacity - enrolled)),
+            percent = capacity ? Math.min(100, Math.round(enrolled / capacity * 100)) : 0,
+            level = percent >= 80 ? "" : percent >= 50 ? "medium" : "low",
+            total = capacity ? `${enrolled} de ${capacity}` : `${enrolled} inscriptos`,
+            zeroTag = enrolled === 0 ? '<span class="course-ranking-zero">Sin inscriptos</span>' : "";
+          return `<article class="course-ranking-row" data-empty="${enrolled === 0}"><div class="course-ranking-name"><span class="course-ranking-position">${index + 1}</span><div><strong>${esc(course.course || "Curso sin identificar")}${zeroTag}</strong><small>${esc(course.site || "Sede sin informar")} · Inicio ${esc(course.startDate || "a confirmar")}</small></div></div><div class="course-ranking-stat"><strong>${enrolled}</strong><small>${enrolled === 1 ? "inscripto" : "inscriptos"}</small></div><div class="course-ranking-stat"><strong>${available}</strong><small>cupos libres</small></div><div class="course-ranking-track" role="img" aria-label="${percent}% de ocupación"><i class="course-ranking-fill ${level}" style="width:${percent}%"></i></div><div class="course-ranking-total">${total}</div></article>`;
+        }).join("") : '<div class="empty">No hay cursos vigentes para mostrar.</div>';
+      }
+      async function loadCourseRanking(role, forceRefresh = false) {
+        const targetId = role === "admin" ? "adminCourseRanking" : "advisorCourseRanking",
+          target = $(targetId),
+          params = { action: "upcomingCourses", refresh: forceRefresh ? "1" : "0" };
+        if (role === "admin") params.adminToken = state.adminToken;
+        else params.token = state.token;
+        if (target) target.innerHTML = '<div class="empty">Consultando cursos vigentes…</div>';
+        const data = await jsonp(params);
+        if (!data.ok) throw Error(data.error || "No se pudieron consultar los cursos vigentes.");
+        renderCourseRanking(targetId, data.courses || []);
+      }
       function courseClassSchedule(code, fallback) {
         const match = String(code || "").match(/^\d{4}-\d{2}-\d{2}-[A-Z]{2}-(\d{1,2}:\d{2})-(\d{1,2}:\d{2})-/i);
         if (match) {
@@ -1148,6 +1187,9 @@
           state.data = d;
           state.month = d.month;
           render();
+          loadCourseRanking("advisor", forceRefresh).catch((error) => {
+            $("advisorCourseRanking").innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+          });
         } catch (x) {
           alert(x.message);
           if (/sesión/i.test(x.message)) logout();
@@ -1434,6 +1476,9 @@
           return `<tr><td>${esc(a.advisor)}</td><td>${a.sales}</td><td class="money">${ars.format(c.rate)}</td><td class="money">${ars.format(c.base)}</td><td class="money bonus">${bonus ? "+" + ars.format(bonus) : ars.format(0)}</td><td class="money">${ars.format(total)}</td></tr>`;
         }).join("");
         $("adminCommissionTotal").textContent = ars.format(commissionsTotal);
+        loadCourseRanking("admin", forceRefresh).catch((error) => {
+          $("adminCourseRanking").innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+        });
       }
       function renderAdminSources(items, total) {
         const colors = ["#6519ff", "#087fdb", "#00a36c", "#f6a21a", "#eb4d76", "#7457c8", "#2e95a3", "#9b6a3d"],
