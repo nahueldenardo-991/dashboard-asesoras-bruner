@@ -1,4 +1,4 @@
-import {initEfemerides} from './efemerides.js?v=20261014-1';
+import {initEfemerides} from './efemerides.js?v=20261014-2';
 import {initLiveInstagram} from './live-instagram.js?v=20260930-1';
 import {initInsights} from './insights.js?v=20260928-6';
 import {snapshotRecords,mergePublications} from './instagram.js?v=20260928-6';
