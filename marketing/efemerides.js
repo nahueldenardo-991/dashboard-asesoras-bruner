@@ -260,6 +260,12 @@ export function upcoming(day = argentinaDay(), limit = 6) {
     .sort((a,b)=>a.date.localeCompare(b.date)).slice(0,limit);
 }
 
+export function todayEvents(day = argentinaDay()) {
+  const list=eventsForYear(Number(day.slice(0,4))).filter(e=>stamp(Number(day.slice(0,4)),e)===day);
+  if(day==='2026-10-14') list.push({title:'Día de las Manos Creativas',demo:true});
+  return list;
+}
+
 export function initEfemerides() {
   const $ = id=>document.getElementById(id);
   let today = argentinaDay(), selected = Number(today.slice(5,7)), year = Number(today.slice(0,4));
@@ -284,6 +290,27 @@ export function initEfemerides() {
       }).join('');
     $('efList').innerHTML=list.map(e=>`<article class="panel ef-card" id="ef-date-${e.month}-${e.day}-${encodeURIComponent(e.title)}"><div class="ef-date"><strong>${e.day}</strong><span>${months[e.month-1]}</span></div><div><span class="badge">${e.category} · ${e.scope}</span><h3>${e.title}</h3><p>${e.trades}</p><a href="${e.source}" target="_blank" rel="noopener noreferrer">Consultar fuente ↗</a></div></article>`).join('')||'<p class="empty">No hay efemérides cargadas para este mes. Elegí otro mes para explorar las fechas.</p>';
   }
+  function renderToday() {
+    const list=todayEvents(today), container=$('efTodayItems');
+    container.replaceChildren();
+    if(!list.length){container.textContent='Hoy no hay efemérides en el calendario.';return;}
+    list.forEach(e=>{
+      const row=document.createElement('label'); row.className='ef-today-check';
+      const check=document.createElement('input');check.type='checkbox';
+      const title=document.createElement('span'); title.textContent=e.title+(e.demo?' · PRUEBA FICTICIA, solo hoy':'');
+      const status=document.createElement('strong');status.setAttribute('role','status');
+      const key='bruner.marketing.efemeride.done:'+today+':'+e.title;
+      const paint=()=>{status.textContent=check.checked?'✓ Realizada':'Pendiente';row.classList.toggle('ef-done',check.checked);};
+      try{check.checked=localStorage.getItem(key)==='1';}catch{$('efTodayNotice').textContent='No se puede acceder al guardado local en este navegador.';}
+      paint();
+      check.addEventListener('change',()=>{
+        try{if(check.checked)localStorage.setItem(key,'1');else localStorage.removeItem(key);$('efTodayNotice').textContent='Estado guardado en este navegador. Podés destildar para deshacer.';}
+        catch{check.checked=!check.checked;$('efTodayNotice').textContent='No se pudo guardar el cambio. Intentá nuevamente.';}
+        paint();
+      });
+      row.append(check,title,status);container.append(row);
+    });
+  }
   function ticker() {
     const next=upcoming(today);
     const content=next.map(e=>`<span class="ef-ticker-item"><strong>${e.date===today?'HOY':`${e.day} ${months[e.month-1].slice(0,3).toUpperCase()} ${e.date.slice(0,4)}`}</strong> ${e.title}<span aria-hidden="true">✦</span></span>`).join('');
@@ -297,8 +324,8 @@ export function initEfemerides() {
     $('efPause').setAttribute('aria-pressed',String(paused));
     $('efPause').textContent=paused?'Reanudar':'Pausar';
   };
-  function updateDay(){const day=argentinaDay();if(day!==today){today=day;ticker();render();}}
+  function updateDay(){const day=argentinaDay();if(day!==today){today=day;ticker();render();renderToday();}}
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDay();});
   setInterval(updateDay,60000);
-  ticker();render();
+  ticker();render();renderToday();
 }
