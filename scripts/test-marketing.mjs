@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {dateNumber,shiftDay,previousMonth,occupancy,priority,promotionOptions,draft,fingerprint} from '../marketing/core.js';
-import {coursePaymentPromotions} from '../marketing/reference.js';
+import {coursePaymentPromotions,coursePricing} from '../marketing/reference.js';
 import {publicationStats,enrollmentRanking} from '../marketing/activity.js';
 const activity=[
  {kind:'content',state:'Publicado',date:'2026-08-28',publishedDate:'2026-09-02',platform:'Instagram',courseCode:'A'},
@@ -35,8 +35,24 @@ assert.ok(options.find(x=>x.id==='cash').text.includes('160.000'));
 assert.ok(options.find(x=>x.id==='transfer').text.includes('173.000'));
 assert.ok(options.find(x=>x.id==='card').text.includes('226.000'));
 assert.equal(promotionOptions({...course,monthlyFee:0,fullPrice:0}).length,1);
+assert.equal(promotionOptions({...course,course:'Taller Globología',monthlyFee:0,fullPrice:0}).length,1);
 assert.ok(promotionOptions({...course,status:'Crítico'}).some(x=>x.id==='critical'));
 assert.ok(!promotionOptions(course).some(x=>x.id==='critical'));
+const injection={...course,course:'Inyección de motos',duration:'6 clases',monthlyFee:0,fullPrice:0};
+const injectionPromo=coursePricing(injection,'2026-10-31');
+assert.deepEqual(
+ {monthlyFee:injectionPromo.monthlyFee,months:injectionPromo.months,basePrice:injectionPromo.basePrice,registration:injectionPromo.registration,cardTotal:injectionPromo.cardTotal,cashTotal:injectionPromo.cashTotal,transferTotal:injectionPromo.transferTotal},
+ {monthlyFee:120000,months:2,basePrice:240000,registration:26000,cardTotal:266000,cashTotal:192000,transferTotal:205000}
+);
+for(const expected of ['120.000','240.000','266.000','44.333','192.000','205.000','31/10/2026'])assert.ok(coursePaymentPromotions(injection,'2026-10-31').includes(expected),expected);
+const injectionRegular=coursePricing({...injection,course:'INYECCION MOTOS'},'2026-11-01');
+assert.deepEqual(
+ {registration:injectionRegular.registration,cardTotal:injectionRegular.cardTotal,cashTotal:injectionRegular.cashTotal,transferTotal:injectionRegular.transferTotal},
+ {registration:30000,cardTotal:270000,cashTotal:192000,transferTotal:207000}
+);
+for(const expected of ['270.000','45.000','192.000','207.000'])assert.ok(coursePaymentPromotions(injection,'2026-11-01').includes(expected),expected);
+assert.ok(promotionOptions(injection,'2026-10-31').find(x=>x.id==='card').text.includes('266.000'));
+assert.ok(promotionOptions(injection,'2026-11-01').find(x=>x.id==='transfer').text.includes('207.000'));
 assert.notEqual(fingerprint(course),fingerprint({...course,monthlyFee:60000}));
 for(const format of ['Reel','Carrusel','Historias','WhatsApp','Publicación'])assert.ok(draft(course,format,'Consultas',options[1].text).every(x=>x.title&&x.text));
 assert.equal(draft({...course,status:'Completo'},'Reel','Consultas','').length,1);

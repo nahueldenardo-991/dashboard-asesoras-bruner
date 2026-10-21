@@ -17,46 +17,96 @@ function courseClassSchedule(code, fallback) {
         const value = String(fallback || "").trim();
         return value && !/(1899|GMT|Standard Time)/i.test(value) ? value : "Horario a confirmar";
       }
-      function coursePaymentPromotions(course) {
-        const monthlyFee = Number(course.monthlyFee) || 0;
-        const fullPrice = Number(course.fullPrice) || 0;
+      function argentinaDateKey(value = new Date()) {
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+        const date = value instanceof Date ? value : new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        return new Intl.DateTimeFormat("sv-SE", {
+          timeZone: "America/Argentina/Buenos_Aires",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(date);
+      }
+      function coursePricing(course, asOf = new Date()) {
+        const price = coursePriceValues(course), monthlyFee = price.monthlyFee, fullPrice = price.fullPrice;
         const duration = String(course.duration || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const monthMatch = duration.match(/(\d+(?:[.,]\d+)?)\s*(?:mes|meses)\b/);
-        const months = monthMatch ? Number(monthMatch[1].replace(",", ".")) : 0;
+        const months = Number(price.paymentMonths) || (monthMatch ? Number(monthMatch[1].replace(",", ".")) : 0);
         const basePrice = monthlyFee > 0 && months > 0 ? monthlyFee * months : fullPrice;
+        const regularRegistration = Number(price.regularRegistration) || 26000;
+        const promotionalRegistration = Number(price.promotionalRegistration) || 0;
+        const promoUntil = price.registrationPromoUntil || "";
+        const dateKey = argentinaDateKey(asOf);
+        const promoActive = Boolean(promotionalRegistration > 0 && promoUntil && dateKey && dateKey <= promoUntil);
+        const registration = promoActive ? promotionalRegistration : regularRegistration;
+        const cardInstallments = Number(price.cardInstallments) || 6;
+        return {
+          ...price, months, basePrice, regularRegistration, promotionalRegistration, promoUntil, promoActive,
+          registration, cardInstallments,
+          cardTotal: basePrice + registration,
+          cashTotal: basePrice * 0.8,
+          transferTotal: basePrice * 0.8 + registration * 0.5,
+        };
+      }
+      function coursePaymentPromotions(course, asOf = new Date()) {
+        const price = coursePricing(course, asOf);
+        const monthlyFee = price.monthlyFee;
+        const fullPrice = price.fullPrice;
+        if (price.noPromotions) {
+          const registration = 26000, total = fullPrice + registration;
+          return `<section class="course-promotions"><div class="course-promotions-title"><strong>Valores de Taller Globología</strong><small>Este curso no tiene promociones vigentes</small></div><div class="course-promo-list"><div class="course-promo"><div class="course-promo-name">Valor del curso</div><div class="course-promo-detail">Pago del taller completo</div><div class="course-promo-total">${ars.format(fullPrice)}</div></div><div class="course-promo"><div class="course-promo-name">Inscripción</div><div class="course-promo-detail">Valor de inscripción</div><div class="course-promo-total">${ars.format(registration)}</div></div><div class="course-promo"><div class="course-promo-name">Total</div><div class="course-promo-detail">Curso + inscripción · sin promociones</div><div class="course-promo-total">${ars.format(total)}</div></div></div></section>`;
+        }
+        const months = price.months, basePrice = price.basePrice;
         if (!(basePrice > 0)) {
           return '<div class="course-promotion-missing">Promociones: falta informar la duración en meses o el valor total del curso para calcular los importes.</div>';
         }
-        const registration = 26000;
-        const cardTotal = basePrice + registration;
-        const cashTotal = basePrice * 0.8;
-        const transferTotal = basePrice * 0.8 + registration * 0.5;
+        const registration = price.registration;
+        const cardTotal = price.cardTotal;
+        const cashTotal = price.cashTotal;
+        const transferTotal = price.transferTotal;
         const calculation = monthlyFee > 0 && months > 0
           ? `${months} ${months === 1 ? "mes" : "meses"} × ${ars.format(monthlyFee)} = ${ars.format(basePrice)}`
           : `Valor total del curso: ${ars.format(basePrice)}`;
+        if (price.specialPricing === "injection") {
+          const notice = price.promoActive
+            ? `Inscripción promocional: ${ars.format(registration)} hasta el 31/10/2026 inclusive. Desde el 01/11: ${ars.format(price.regularRegistration)}.`
+            : `Inscripción vigente: ${ars.format(registration)}.`;
+          const standardCard = basePrice + price.regularRegistration;
+          const standardTransfer = basePrice * 0.8 + price.regularRegistration * 0.5;
+          const cardAfter = price.promoActive ? `<span class="course-promo-after">Desde el 01/11: ${ars.format(standardCard)} · 6 cuotas de ${ars.format(standardCard / 6)}</span>` : "";
+          const transferAfter = price.promoActive ? `<span class="course-promo-after">Desde el 01/11: ${ars.format(standardTransfer)}</span>` : "";
+          return `<section class="course-promotions"><div class="course-promotions-title"><strong>Formas de pago · Inyección de motos</strong><small>Precio base: 2 cuotas mensuales de ${ars.format(monthlyFee)} = ${ars.format(basePrice)}</small></div><div class="course-promo-notice">${notice}</div><div class="course-promo-list"><div class="course-promo"><div class="course-promo-name">Tarjeta de crédito</div><div class="course-promo-detail">Curso + inscripción de ${ars.format(registration)} · total financiable por PayWay en 6 cuotas sin interés de aprox. ${ars.format(cardTotal / 6)}${cardAfter}</div><div class="course-promo-total">${ars.format(cardTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Efectivo</div><div class="course-promo-detail">20% de descuento sobre el curso · inscripción bonificada</div><div class="course-promo-total">${ars.format(cashTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Transferencia</div><div class="course-promo-detail">20% de descuento sobre el curso + 50% de inscripción (${ars.format(registration / 2)})${transferAfter}</div><div class="course-promo-total">${ars.format(transferTotal)}</div></div></div></section>`;
+        }
         return `<section class="course-promotions"><div class="course-promotions-title"><strong>Promociones por pago del curso completo</strong><small>Precio base: ${esc(calculation)}</small></div><div class="course-promo-list"><div class="course-promo"><div class="course-promo-name">Tarjeta de crédito</div><div class="course-promo-detail">Curso + inscripción de ${ars.format(registration)} · hasta 6 cuotas sin interés de ${ars.format(cardTotal / 6)}</div><div class="course-promo-total">${ars.format(cardTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Efectivo</div><div class="course-promo-detail">20% de descuento · inscripción bonificada</div><div class="course-promo-total">${ars.format(cashTotal)}</div></div><div class="course-promo"><div class="course-promo-name">Transferencia</div><div class="course-promo-detail">20% de descuento + 50% de inscripción (${ars.format(registration / 2)})</div><div class="course-promo-total">${ars.format(transferTotal)}</div></div></div></section>`;
+      }
+      function coursePriceValues(course) {
+        const name = String(course.course || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        if (name === "TALLER GLOBOLOGIA") return { monthlyFee: 0, fullPrice: 200000, noPromotions: true };
+        if (/^INYECCION(?: DE)? MOTOS$/.test(name)) return {
+          monthlyFee: 120000,
+          fullPrice: 240000,
+          noPromotions: false,
+          paymentMonths: 2,
+          regularRegistration: 30000,
+          promotionalRegistration: 26000,
+          registrationPromoUntil: "2026-10-31",
+          cardInstallments: 6,
+          specialPricing: "injection",
+        };
+        return {
+          monthlyFee: Number(course.monthlyFee) || 0,
+          fullPrice: Number(course.fullPrice) || 0,
+          noPromotions: false,
+          paymentMonths: Number(course.paymentMonths) || 0,
+          regularRegistration: Number(course.regularRegistration) || 26000,
+          promotionalRegistration: Number(course.promotionalRegistration) || 0,
+          registrationPromoUntil: course.registrationPromoUntil || "",
+          cardInstallments: Number(course.cardInstallments) || 6,
+        };
       }
 
 const HOLIDAYS=new Set(['2026-01-01','2026-02-16','2026-02-17','2026-03-23','2026-03-24','2026-04-02','2026-04-03','2026-05-01','2026-05-25','2026-06-15','2026-06-20','2026-07-09','2026-07-10','2026-08-17','2026-10-12','2026-11-23','2026-12-07','2026-12-08','2026-12-25']);
 const workProjection=(month,sales,override)=>{const [y,m]=month.split('-').map(Number),now=new Date(),last=new Date(y,m,0),current=now.getFullYear()===y&&now.getMonth()+1===m;let total=0,elapsed=0;for(let d=1;d<=last.getDate();d++){const date=new Date(y,m-1,d),key=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;if(date.getDay()!==0&&!HOLIDAYS.has(key)){total++;if(!current||date<=now)elapsed++}}const effective=Number(override)||total;return current&&elapsed?Math.round(sales/elapsed*effective):sales};
 
-function coursePricing(course) {
-        const monthlyFee = Number(course.monthlyFee) || 0;
-        const fullPrice = Number(course.fullPrice) || 0;
-        const duration = String(course.duration || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        const monthMatch = duration.match(/(\d+(?:[.,]\d+)?)\s*(?:mes|meses)\b/);
-        const months = monthMatch ? Number(monthMatch[1].replace(",", ".")) : 0;
-        const basePrice = monthlyFee > 0 && months > 0 ? monthlyFee * months : fullPrice;
-        if (!(basePrice > 0)) {
-          return null;
-        }
-        const registration = 26000;
-        const cardTotal = basePrice + registration;
-        const cashTotal = basePrice * 0.8;
-        const transferTotal = basePrice * 0.8 + registration * 0.5;
-        const calculation = monthlyFee > 0 && months > 0
-          ? `${months} ${months === 1 ? "mes" : "meses"} × ${ars.format(monthlyFee)} = ${ars.format(basePrice)}`
-          : `Valor total del curso: ${ars.format(basePrice)}`;
-        return { monthlyFee, months, basePrice, registration, cardTotal, cashTotal, transferTotal };
-}
 export { courseClassSchedule, coursePaymentPromotions, coursePricing, workProjection };

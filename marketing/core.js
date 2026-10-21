@@ -1,4 +1,4 @@
-import {coursePricing} from './reference.js?v=20260928-6';
+import {coursePricing} from './reference.js?v=20261021-1';
 export const STATES=['Idea','Pendiente','En producción','Para revisar','Aprobado','Publicado'];
 export const PLATFORMS=['Instagram','WhatsApp','Facebook','TikTok','Anuncios pagos'];
 export const FORMATS=['Reel','Carrusel','Historias','WhatsApp','Publicación'];
@@ -22,11 +22,11 @@ export function priority(c,contents=[],sales=null,day=today()){
  return {...o,days,blocked,covered,label,rank,signal,action,reason:`${c.course} ${timing}; ${o.available} cupos disponibles${o.percent===null?'':`, ${Math.round(o.percent)}% de ocupación`}. ${covered?'Tiene contenido programado en los próximos 14 días.':'Sin contenido programado en los próximos 14 días en este dispositivo.'}${sales===null?'':` Ventas del curso en el mes: ${sales} (todas sus comisiones).`}`};
 }
 export function fingerprint(c){return JSON.stringify([c.startDate,c.monthlyFee,c.fullPrice,c.duration,c.status,c.available]);}
-export function promotionOptions(c){
- const price=coursePricing(c);
+export function promotionOptions(c,asOf){
+ const price=coursePricing(c,asOf);
  const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
  const list=[{id:'none',text:'Consultar condiciones vigentes con asesoras.'}];
- if(price)list.push({id:'cash',text:`Pago completo en efectivo: ${money(price.cashTotal)}. 20% de descuento e inscripción bonificada.`},{id:'transfer',text:`Pago completo por transferencia: ${money(price.transferTotal)}. 20% de descuento y 50% de la inscripción.`},{id:'card',text:`Pago completo con tarjeta: ${money(price.cardTotal)}. Hasta 6 cuotas sin interés de ${money(price.cardTotal/6)}.`});
+ if(price&&price.basePrice>0&&!price.noPromotions){const installments=price.cardInstallments||6;list.push({id:'cash',text:`Pago completo en efectivo: ${money(price.cashTotal)}. 20% de descuento e inscripción bonificada.`},{id:'transfer',text:`Pago completo por transferencia: ${money(price.transferTotal)}. 20% de descuento y 50% de la inscripción.`},{id:'card',text:`Pago completo con tarjeta: ${money(price.cardTotal)}. Hasta ${installments} cuotas sin interés de aproximadamente ${money(price.cardTotal/installments)}.`});}
  if(norm(c.status).includes('critico'))list.push({id:'critical',text:'Inscripción al 50%: $ 13.000 para este curso crítico.'});
  return list;
 }
