@@ -35,7 +35,14 @@ assert.ok(options.find(x=>x.id==='cash').text.includes('160.000'));
 assert.ok(options.find(x=>x.id==='transfer').text.includes('173.000'));
 assert.ok(options.find(x=>x.id==='card').text.includes('226.000'));
 assert.equal(promotionOptions({...course,monthlyFee:0,fullPrice:0}).length,1);
-assert.equal(promotionOptions({...course,course:'Taller Globología',monthlyFee:0,fullPrice:0}).length,1);
+const globologia={...course,course:'Taller Globología',monthlyFee:0,fullPrice:0,duration:'6 horas'};
+const globologiaPrice=coursePricing(globologia,'2026-10-22');
+assert.deepEqual(
+ {basePrice:globologiaPrice.basePrice,registration:globologiaPrice.registration,cardTotal:globologiaPrice.cardTotal,cashTotal:globologiaPrice.cashTotal,transferTotal:globologiaPrice.transferTotal},
+ {basePrice:200000,registration:26000,cardTotal:226000,cashTotal:160000,transferTotal:173000}
+);
+for(const expected of ['200.000','226.000','37.667','160.000','173.000'])assert.ok(coursePaymentPromotions(globologia,'2026-10-22').includes(expected),expected);
+assert.equal(promotionOptions(globologia,'2026-10-22').length,4);
 assert.ok(promotionOptions({...course,status:'Crítico'}).some(x=>x.id==='critical'));
 assert.ok(!promotionOptions(course).some(x=>x.id==='critical'));
 const injection={...course,course:'Inyección de motos',duration:'6 clases',monthlyFee:0,fullPrice:0};

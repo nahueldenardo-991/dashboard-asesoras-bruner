@@ -1106,7 +1106,13 @@
       }
       function coursePriceValues(course) {
         const name = String(course.course || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-        if (name === "TALLER GLOBOLOGIA") return { monthlyFee: 0, fullPrice: 200000, noPromotions: true };
+        if (name === "TALLER GLOBOLOGIA") return {
+          monthlyFee: 0,
+          fullPrice: 200000,
+          noPromotions: false,
+          regularRegistration: 26000,
+          cardInstallments: 6,
+        };
         if (/^INYECCION(?: DE)? MOTOS$/.test(name)) return {
           monthlyFee: 120000,
           fullPrice: 240000,
