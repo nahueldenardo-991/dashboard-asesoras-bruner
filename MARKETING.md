@@ -20,7 +20,7 @@ La estructura se inspeccionó en el Apps Script y en el proxy Netlify locales. L
 
 Los datos comerciales conservan su fuente de verdad en los Sheets actuales. Según el código inspeccionado: `Cursos Disponibles`, `Inscriptos`, `Valores de cursos`, objetivos personales/grupales y el índice de procedencias son independientes de los futuros registros editoriales.
 
-La procedencia vigente normaliza teléfonos, busca coincidencia exacta y usa últimos cuatro dígitos como respaldo, tomando fuentes fechadas desde junio de 2026. En la fecha más reciente, CATA tiene precedencia sobre las otras fuentes coincidentes. Marketing recibe este desglose; no introduce Mail ni Base fría. Cambiar esa regla en marketing produciría diferencias con gestión, por eso no se hizo.
+La procedencia vigente normaliza teléfonos, busca coincidencia exacta y usa últimos cuatro dígitos como respaldo, tomando fuentes fechadas desde junio de 2026 pero nunca posteriores a la fecha de la venta. En la fecha válida más reciente, CATA tiene precedencia sobre las otras fuentes coincidentes. Marketing recibe este desglose; no introduce Mail ni Base fría. Cambiar esa regla en marketing produciría diferencias con gestión, por eso no se hizo.
 
 No están disponibles consultas por comisión, conversión consulta/venta, atribución causal de ventas a contenidos, métricas automáticas de Instagram/WhatsApp, ni historial de ocupación. No se fabrican esos indicadores. Los resultados por contenido se registran manualmente indicando fuente y período. Las ventas por curso corresponden a todas las comisiones de ese nombre, no se atribuyen artificialmente a una sede/comisión.
 
